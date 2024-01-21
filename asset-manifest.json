@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/erply-plugin/static/css/main.f24484a0.css",
+    "main.js": "/erply-plugin/static/js/main.e8403fd5.js",
+    "static/js/787.ba531de4.chunk.js": "/erply-plugin/static/js/787.ba531de4.chunk.js",
+    "static/media/logo.svg": "/erply-plugin/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
+    "index.html": "/erply-plugin/index.html",
+    "main.f24484a0.css.map": "/erply-plugin/static/css/main.f24484a0.css.map",
+    "main.e8403fd5.js.map": "/erply-plugin/static/js/main.e8403fd5.js.map",
+    "787.ba531de4.chunk.js.map": "/erply-plugin/static/js/787.ba531de4.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.f24484a0.css",
+    "static/js/main.e8403fd5.js"
+  ]
+}
