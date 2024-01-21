@@ -59,13 +59,15 @@ const OrderCard = ({
   code,
   warehouse
 }) => {
+
+
   const AccDiv = styled(Accordion)(({ theme }) => ({
-    //background: fulfilled ? "#e6ffe6" : lightColor,
+
     fontFamily: "Poppins !important",
     background:
-       //"#E6E6FA"
-       "#EEF5FF"
-      ,
+      
+      "#EEF5FF"
+    ,
     transition: "0.3s",
     // width:"440px",
     "& h3": {
@@ -86,17 +88,12 @@ const OrderCard = ({
     },
     "& svg": {
       color: "#111",
-      // color: "rgb(255, 255, 255)",
-      // mixBlendMode: "difference",
+      
     },
   }));
-  console.log("order", order);
+
   const [open, setOpen] = useState(false);
-
-
-  // console.log('lightColor',lightColor)
-
-
+  
   return (
     <AccDiv expanded={open} onChange={() => setOpen(!open)}>
       <AccordionSummary expandIcon={<ExpandMore />}>
@@ -120,16 +117,16 @@ const OrderCard = ({
           </Box>
         </Box>
       </AccordionSummary>
-      
+
       <OrderDetails
-        
+
         order={order}
         sessionKey={session}
-                                            clientCode={code}
-                                            warehouse={warehouse}
+        clientCode={code}
+        warehouse={warehouse}
 
       />
-    
+
     </AccDiv>
   );
 };

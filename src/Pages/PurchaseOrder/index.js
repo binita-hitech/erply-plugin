@@ -34,7 +34,7 @@ const GridBlockContent = styled("div")(({ theme }) => ({
     maxWidth: "100%",
     gridTemplateColumns: "auto",
     gap: "1px solid #ccc",
-    fontFamily: "'Trebechut' sans-serif",
+    fontFamily: "Poppins !important",
     fontSize: "14px",
     fontWeight: "bold",
 }));

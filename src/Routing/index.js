@@ -31,7 +31,7 @@ const PublicRoute = ({ children }) => {
 
 const Routing = () => {
     return (
-        <BrowserRouter>
+        <BrowserRouter basename="/erply-plugin">
             <Routes>
                 {/* HOME */}
                 <Route path="/" element={<Login />} />

@@ -5,6 +5,7 @@ import { styled } from "@mui/material";
 import httpclient from '../../utils';
 import MuiAlert from "@mui/material/Alert";
 import Logo from "../../../src/Components/assets/ret1.png"
+import { useNavigate } from "react-router";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -15,7 +16,7 @@ const GridBlockContent = styled("div")(({ theme }) => ({
     maxWidth: "100%",
     gridTemplateColumns: "auto",
     gap: "1px solid #ccc",
-    fontFamily: "'Trebechut' sans-serif",
+    fontFamily: "Poppins !important",
     fontSize: "14px",
     fontWeight: "bold",
 }));
@@ -30,6 +31,7 @@ const GridBlockTitle = styled("div")(({ theme }) => ({
 }));
 
 const Login = () => {
+    const navigate = useNavigate();
     const [open, setOpen] = useState(false);
     const [snackStatus, setSnackStatus] = useState("");
     const [snackMessage, setSnackMessage] = useState("");
@@ -79,7 +81,7 @@ const Login = () => {
                 setSnackMessage("Logged in successfully!");
                 setLoading(false);
                 setTimeout(() => {
-                    window.location = "/dashboard";
+                    navigate("/dashboard");
                 }, 1000);
             } else {
                 setLoading(false);

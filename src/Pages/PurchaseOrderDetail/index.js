@@ -38,9 +38,11 @@ const FlexContent = styled("div")(({ theme }) => ({
     fontSize: "17px",
     marginBottom: "20px",
     alignItems: "flex-start",
+   
     [theme.breakpoints.down("md")]: {
         flexDirection: "column", // Revert to row for medium and larger screens
         alignItems: "left",
+        
     },
 }));
 const FlexContent1 = styled("div")(({ theme }) => ({
@@ -49,10 +51,32 @@ const FlexContent1 = styled("div")(({ theme }) => ({
     fontSize: "17px",
     marginBottom: "20px",
     alignItems: "flex-start",
+    
     [theme.breakpoints.down("md")]: {
+        
         flexDirection: "row", // Revert to row for medium and larger screens
         alignItems: "flex-start",
+       
+       
     },
+}));
+
+const FlexInnerTitle1 = styled("div")(({ theme }) => ({
+    display: "flex",
+    alignItems: "left",
+    justifyContent: "space-between",
+    minWidth: "180px",
+    maxWidth: "250px",
+    fontWeight: "700",
+    fontSize: "14px",
+    [theme.breakpoints.down("md")]: {
+        alignItems: "left",
+        minWidth: "60%",
+        maxWidth: "60%",
+
+    },
+
+
 }));
 
 const FlexInnerTitle = styled("div")(({ theme }) => ({
@@ -65,6 +89,8 @@ const FlexInnerTitle = styled("div")(({ theme }) => ({
     fontSize: "14px",
     [theme.breakpoints.down("md")]: {
         alignItems: "left",
+        minWidth: "100%",
+        maxWidth: "100%",
 
     },
 
@@ -127,9 +153,12 @@ const GridBlockContent = styled("div")(({ theme }) => ({
     minWidth: "100%",
     gridTemplateColumns: "auto",
     gap: "1px solid #ccc",
-    fontFamily: "'Trebechut' sans-serif",
+    fontFamily: "Poppins !important",
     fontSize: "14px",
     fontWeight: "bold",
+    [theme.breakpoints.down("md")]: {
+        width: "auto auto",
+    },
 }));
 
 const GridBlockTitle = styled("div")(({ theme }) => ({
@@ -304,9 +333,8 @@ const PurchaseOrderDetail = () => {
 
 
     const handleChange = (e, pick) => {
-        console.log("pick", pick);
-        const { name, value } = e.target;
-        console.log("pick1", name, value);
+        
+        const { name, value } = e.target;       
         const res = modifiedData.map((mod) => {
             if (mod.id === pick.detailID) {
                 return { ...mod, [name]: value };
@@ -354,13 +382,9 @@ const PurchaseOrderDetail = () => {
                 return mod;
             }
         });
-        //console.log("new-res", updatedData);
+        
         setModifiedData(updatedData);
     };
-
-    //console.log("invoice-data", invoiceData);
-    console.log("modified-data", modifiedData);
-    //console.log("pick up list", pickupList);
 
 
     const handleSubmit = () => {
@@ -405,9 +429,9 @@ const PurchaseOrderDetail = () => {
     const calculateDueDate = () => {
         const dueDays = parseInt(invoiceData.invoiceDueDays);
         if (!isNaN(dueDays)) {
-            const currentDate = moment(); // Convert to Moment.js object
+            const currentDate = moment(); 
             const futureDate = currentDate.add(dueDays, 'days');
-            return futureDate.format('ddd, MMM Do YYYY, h:mm:ss a'); // Format the date as needed
+            return futureDate.format('ddd, MMM Do YYYY, h:mm:ss a'); 
         }
         return '';
     };
@@ -422,7 +446,7 @@ const PurchaseOrderDetail = () => {
                 <Card>
 
                     <Grid container spacing={2}>
-                        <Grid item xs={12}>
+                        <Grid item xs={12} md={12}>
                             <GridBlockContent>
                                 <GridBlockTitle>Invoice for Order # {order.poNo}
                                     <Box textAlign={"right"}>
@@ -439,16 +463,16 @@ const PurchaseOrderDetail = () => {
                                         {/* Left Side */}
                                         <Grid item xs={12} md={4}>
                                             <FlexContent1>
-                                                <FlexInnerTitle>
+                                                <FlexInnerTitle1>
                                                     <span>Purchase Order No.</span> <span> </span>
-                                                </FlexInnerTitle>
+                                                </FlexInnerTitle1>
                                                 <Values>{order.poNo}</Values>
                                             </FlexContent1>
 
                                             <FlexContent1>
-                                                <FlexInnerTitle>
+                                                <FlexInnerTitle1>
                                                     <span>Supplier Name</span> <span>   </span>
-                                                </FlexInnerTitle>
+                                                </FlexInnerTitle1>
                                                 <Values>{order.supplierName}</Values>
                                             </FlexContent1>
 
@@ -456,16 +480,16 @@ const PurchaseOrderDetail = () => {
                                         </Grid>
                                         <Grid item xs={12} md={4}>
                                             <FlexContent1>
-                                                <FlexInnerTitle>
+                                                <FlexInnerTitle1>
                                                     <span>Date/Time</span> <span>  </span>
-                                                </FlexInnerTitle>
+                                                </FlexInnerTitle1>
                                                 <Values>{order.dateTime}</Values>
                                             </FlexContent1>
 
                                             <FlexContent1>
-                                                <FlexInnerTitle>
+                                                <FlexInnerTitle1>
                                                     <span>Status</span> <span> </span>
-                                                </FlexInnerTitle>
+                                                </FlexInnerTitle1>
                                                 <Values>{order.status}</Values>
                                             </FlexContent1>
 
@@ -473,9 +497,9 @@ const PurchaseOrderDetail = () => {
                                         </Grid>
                                         <Grid item xs={12} md={4}>
                                             <FlexContent1>
-                                                <FlexInnerTitle>
+                                                <FlexInnerTitle1>
                                                     <span>Warehouse</span> <span>   </span>
-                                                </FlexInnerTitle>
+                                                </FlexInnerTitle1>
                                                 <Values>{order.warehouseName}</Values>
                                             </FlexContent1>
 

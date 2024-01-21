@@ -1,13 +1,8 @@
-import { ExpandMore } from "@mui/icons-material";
+
 import {
   Accordion,
   AccordionDetails,
-  AccordionSummary,
   Box,
-  Button,
-  Card,
-  Collapse,
-  Typography,
   styled,
   Grid,
   TextField,
@@ -17,7 +12,7 @@ import {
   Container
 } from "@mui/material";
 import moment from "moment";
-import React, { memo, useEffect, useMemo, useState } from "react";
+import React, { useState } from "react";
 
 
 
@@ -59,8 +54,6 @@ const FlexInnerTitle = styled("div")(({ theme }) => ({
   maxWidth: "250px",
   fontWeight: "700",
   fontSize: "14px",
-  
-
 
 }));
 
@@ -76,39 +69,20 @@ const Values = styled("div")(({ theme }) => ({
 }));
 
 const OrderCard = (props) => {
-  const [open, setOpen] = useState(true);
+
   
-  // var curr = {};
-  // props.modifiedData?.length > 0 &&
-  //     props.modifiedData.map((m) => {
-  //         if (m.id === props.order?.detailID) {
-  //             curr = m;
-  //         }
-  //     });
 
-
-  // if (curr.barcodeFlag === true) {
-  //     curr.quantity = parseInt(curr.amount)
-  // };
-
-  // console.log("curr", curr);
   const OrderHeader = styled(Box)(({ theme }) => ({
     color: "#111",
     background: parseInt(props?.order.amount) === props.curr?.quantity ? "#d1ffbd" : "#ffcccb",
-    // color: "rgb(255, 255, 255)",
-    // mixBlendMode: "difference",
     fontFamily: "Poppins !important",
     padding:"15px",
-    // display: "flex",
-    // alignItems: "center",
-    // justifyContent: "space-between",
     gap: "10px",
     "& span": {
       fontSize: "15px",
       color: "#111",
     },
-
-    
+  
   }));
 
   const AccDiv = styled(Accordion)(({ theme }) => ({
@@ -134,8 +108,7 @@ const OrderCard = (props) => {
     },
     "& svg": {
       color: "#111",
-      // color: "rgb(255, 255, 255)",
-      // mixBlendMode: "difference",
+      
     },
   }));
 
@@ -147,7 +120,6 @@ const OrderCard = (props) => {
           <OrderHeader>
             <Box>
             <h3>Code: #{props?.order?.code}</h3>
-            {/* <span style={{ marginRight: "30px" }}>{currentTimer}</span> */}
             </Box>
           <Box
             display={"grid"}
@@ -165,18 +137,11 @@ const OrderCard = (props) => {
           </Box>
           </OrderHeader>
         </Box>
-      
-      
-      {/* <OrderDetails
-        
-        props={props}
-        
-      /> */}
+    
       
       <DetailsDiv>
                 <Box
-                    display={"grid"}
-                   
+                    display={"grid"}                   
                     alignItems={"left"}
                     pr={3}
                     pl={3}
