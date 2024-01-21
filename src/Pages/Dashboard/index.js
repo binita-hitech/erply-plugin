@@ -18,7 +18,7 @@ const Dashboard = () => {
     return (
         <Page>
             <BoxFlex>
-                <Card sx={{ marginTop: '120px', width: '30%' }}>
+                <Card sx={{ marginTop: '120px', minWidth: '30%' }}>
                     <Box p={4}>
                         <Grid item xs={12}>
                             <Box textAlign="center"  >

@@ -4,6 +4,7 @@ import { AccountCircle, Https, Menu } from '@mui/icons-material';
 import { styled } from "@mui/material";
 import httpclient from '../../utils';
 import MuiAlert from "@mui/material/Alert";
+import Logo from "../../../src/Components/assets/ret1.png"
 
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -33,7 +34,7 @@ const Login = () => {
     const [snackStatus, setSnackStatus] = useState("");
     const [snackMessage, setSnackMessage] = useState("");
     const [loading, setLoading] = useState(false);
-    const [loginData, setLoginData] = useState({        
+    const [loginData, setLoginData] = useState({
         clientCode: "",
         username: "",
         password: "",
@@ -72,7 +73,7 @@ const Login = () => {
             if (data.msg === "success") {
                 localStorage.setItem("sessionKey", JSON.stringify(data.sessionKey));
                 localStorage.setItem("clientCode", JSON.stringify(data.clientCode));
-                localStorage.setItem("userName", JSON.stringify(data.userName));
+                localStorage.setItem("userName", JSON.stringify(data.employeeName));
                 setOpen(true);
                 setSnackStatus("success");
                 setSnackMessage("Logged in successfully!");
@@ -92,14 +93,18 @@ const Login = () => {
 
     return (
         <div>
-            <Container component="main" maxWidth="lg" style={{ textAlign: 'center', marginTop: '120px' }}>
+            <Container component="main" maxWidth="sm" style={{ textAlign: 'center', marginTop: '120px' }}>
                 <CssBaseline />
                 <Card style={{ boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.5)' }}>
                     <Grid container spacing={2}>
+                        <Grid item xs={12} textAlign="center">
+                            <img src={Logo} alt="img"/>
+                        </Grid>
                         <Grid item xs={12}>
+
                             <FormGroup>
                                 <GridBlockContent>
-                                    <GridBlockTitle>Login</GridBlockTitle>
+                                    {/* <GridBlockTitle>Login</GridBlockTitle> */}
                                     <Box pt={2} pb={1}>
                                         <Box p={2} pb={2} sx={{ display: 'flex', alignItems: 'flex-end' }}>
                                             <Menu sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
@@ -146,7 +151,7 @@ const Login = () => {
                                         {loading ?
                                             <Button
                                                 variant="contained"
-                                                color="secondary"                                               
+                                                color="secondary"
                                             >
                                                 <CircularProgress style={{ height: "20px", width: "20px", color: "#fff", marginRight: "10px" }} /> Loading
                                             </Button> :
@@ -168,7 +173,7 @@ const Login = () => {
 
                 </Card>
             </Container>
-           
+
             <Snackbar
                 open={open}
                 autoHideDuration={6000}

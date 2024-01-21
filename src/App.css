@@ -22,3 +22,7 @@ h2,.h2{
   animation-delay: 1s;
   transform: translateX(100%);
 }
+.dark_text{
+  color: #8b0000;
+  font-weight: 700;
+}

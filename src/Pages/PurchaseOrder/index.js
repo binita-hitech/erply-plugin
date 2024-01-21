@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Button, Card, Container, CssBaseline, FormControl, FormGroup, Grid, InputAdornment, InputLabel, LinearProgress, MenuItem, Select, TextField, Typography, styled } from '@mui/material';
+import { Backdrop, Box, Button, Card, CircularProgress, Container, CssBaseline, FormControl, FormGroup, Grid, InputAdornment, InputLabel, LinearProgress, MenuItem, Select, TextField, Typography, styled, Pagination, 
+    useMediaQuery,
+    useTheme} from '@mui/material';
 import { ArrowBack, Cancel, Search } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import httpclient from '../../utils';
 import TableComponent1 from '../../Components/TableComponent';
-
+import { Masonry } from "@mui/lab";
+import OrderCard from "../../Components/OrderCard"
 
 const columns = [
     { id: "poNo", name: "PO#" },
@@ -17,6 +20,14 @@ const columns = [
     { id: "actions", name: "Recieved PO" },
 
 ];
+
+const StyledFormControl = styled(FormControl)(({ theme }) => ({
+    width: "50%", // Default width for all screens
+
+    [theme.breakpoints.down("md")]: {
+        width: "100%", // Set a minimum width for medium and larger screens
+    },
+}));
 
 const GridBlockContent = styled("div")(({ theme }) => ({
     display: "grid",
@@ -41,6 +52,17 @@ const GridBlockTitle = styled("div")(({ theme }) => ({
 
 }));
 
+const FlexContent = styled("div")(({ theme }) => ({
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "flex-start",
+    width: "100%",
+    [theme.breakpoints.down("md")]: {
+        flexDirection: "column", // Revert to row for medium and larger screens
+        alignItems: "left",
+    },
+}));
+
 
 const PurchaseOrder = () => {
     var sessionKey = localStorage.getItem('sessionKey');
@@ -60,7 +82,7 @@ const PurchaseOrder = () => {
     };
 
     const [loading, setLoading] = useState(false);
-    const [poList, setPoList] = useState({});
+    const [poList, setPoList] = useState([]);
     const [warehouses, setWarehouses] = useState({});
     const [searchValue, setSearchValue] = useState('');
     const [searchValue1, setSearchValue1] = useState('');
@@ -103,7 +125,7 @@ const PurchaseOrder = () => {
     };
 
     //console.log("warehouses", warehouses);
-    //console.log("po", poList);
+    console.log("po", poList);
 
     const handleSearch = () => {
         setSearchValue(searchValue);
@@ -121,6 +143,10 @@ const PurchaseOrder = () => {
     const handleCancel1 = () => {
         setSearchValue1('');
     };
+
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  
 
     return (
         <div>
@@ -144,65 +170,71 @@ const PurchaseOrder = () => {
                                             </Link>
                                         </Box>
                                     </GridBlockTitle>
-                                    <Box pt={2} pb={1}>
-                                        <Box p={2} pb={2} sx={{ display: 'flex', alignItems: 'flex-end' }}>
-                                            <FormControl fullWidth sx={{ flex: 1, marginRight: '8px' }}>
-                                                <TextField
-                                                    size="small"
-                                                    variant="standard"
-                                                    placeholder="Filter by PO#"
-                                                    value={searchValue}
-                                                    onChange={(e) => setSearchValue(e.target.value)}
-                                                    InputProps={{
-                                                        endAdornment: (
-                                                            <InputAdornment position="end">
-                                                                {searchValue ? (
-                                                                    <Cancel
-                                                                        onClick={handleCancel}
+
+                                    {/* <Box pt={2} pb={1}> */}
+                                    <Box p={2} pb={2} sx={{ display: 'flex', alignItems: 'flex-end' }}>
+                                        <FlexContent>
+                                            <>
+                                                <FormControl fullWidth sx={{ flex: 1, marginRight: '8px' }}>
+                                                    <TextField
+                                                        size="small"
+                                                        //variant="standard"
+                                                        placeholder="Filter by PO#"
+                                                        value={searchValue}
+                                                        onChange={(e) => setSearchValue(e.target.value)}
+                                                        InputProps={{
+                                                            endAdornment: (
+                                                                <InputAdornment position="end">
+                                                                    {searchValue ? (
+                                                                        <Cancel
+                                                                            onClick={handleCancel}
+                                                                            style={{ cursor: 'pointer' }}
+                                                                        />
+                                                                    ) : null}
+                                                                    <Search
+                                                                        onClick={handleSearch}
                                                                         style={{ cursor: 'pointer' }}
                                                                     />
-                                                                ) : null}
-                                                                <Search
-                                                                    onClick={handleSearch}
-                                                                    style={{ cursor: 'pointer' }}
-                                                                />
-                                                            </InputAdornment>
-                                                        ),
-                                                    }}
-                                                />
-                                            </FormControl>
+                                                                </InputAdornment>
+                                                            ),
+                                                        }}
+                                                    />
+                                                </FormControl>
 
-                                            <FormControl fullWidth sx={{ flex: 1 }}>
-                                                <TextField
-                                                    size="small"
-                                                    variant="standard"
-                                                    placeholder="Filter by Supplier"
-                                                    value={searchValue1}
-                                                    onChange={(e) => setSearchValue1(e.target.value)}
-                                                    InputProps={{
-                                                        endAdornment: (
-                                                            <InputAdornment position="end">
-                                                                {searchValue1 ? (
-                                                                    <Cancel
-                                                                        onClick={handleCancel1}
+                                                <FormControl fullWidth sx={{ flex: 1 }}>
+                                                    <TextField
+                                                        size="small"
+                                                        //variant="standard"
+                                                        placeholder="Filter by Supplier"
+                                                        value={searchValue1}
+                                                        onChange={(e) => setSearchValue1(e.target.value)}
+                                                        InputProps={{
+                                                            endAdornment: (
+                                                                <InputAdornment position="end">
+                                                                    {searchValue1 ? (
+                                                                        <Cancel
+                                                                            onClick={handleCancel1}
+                                                                            style={{ cursor: 'pointer' }}
+                                                                        />
+                                                                    ) : null}
+                                                                    <Search
+                                                                        onClick={handleSearch1}
                                                                         style={{ cursor: 'pointer' }}
                                                                     />
-                                                                ) : null}
-                                                                <Search
-                                                                    onClick={handleSearch1}
-                                                                    style={{ cursor: 'pointer' }}
-                                                                />
-                                                            </InputAdornment>
-                                                        ),
-                                                    }}
-                                                />
-                                            </FormControl>
-
-                                        </Box>
+                                                                </InputAdornment>
+                                                            ),
+                                                        }}
+                                                    />
+                                                </FormControl>
+                                            </>
+                                        </FlexContent>
                                     </Box>
 
+                                    {/* </Box> */}
+
                                     <Box p={2} pb={2} sx={{ display: 'flex', alignItems: 'flex-end' }}>
-                                        <FormControl variant="standard" sx={{ m: 1, minWidth: "50%" }}>
+
+                                        <StyledFormControl>
                                             <InputLabel id="demo-simple-select-standard-label">Search By Warehouse</InputLabel>
                                             <Select
                                                 labelId="demo-simple-select-standard-label"
@@ -217,7 +249,8 @@ const PurchaseOrder = () => {
                                                     <MenuItem value={warehouse.warehouseID}>{warehouse.warehouseName}</MenuItem>
                                                 ))}
                                             </Select>
-                                        </FormControl>
+                                        </StyledFormControl>
+
                                     </Box>
 
 
@@ -226,11 +259,17 @@ const PurchaseOrder = () => {
                             </FormGroup>
                         </Grid>
                     </Grid>
-                    {loading &&
-                        <Box sx={{ width: '100%' }}>
-                            <LinearProgress />
-                        </Box>
-                    }
+                    <Backdrop
+                        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                        open={loading}
+
+                    >
+                        <CircularProgress color="inherit" />
+                        {/* <Typography variant="h6" component="div">
+                            &nbsp;&nbsp; Fetching...Please Wait
+                        </Typography> */}
+                    </Backdrop>
+                    {!isMobile ? (
                     <Grid item xs={12}>
                         <TableComponent1
                             columns={columns}
@@ -239,7 +278,47 @@ const PurchaseOrder = () => {
                             clientCode={code}
                             warehouse={warehouse}
                         />
+
                     </Grid>
+                    ) : (
+                    <Grid item xs={12}>
+                        <Masonry
+                            columns={{ xs: 1, sm: 2, md: 3 }}
+                            spacing={3}
+                            sx={{ margin: "0", width: "auto" }}
+                        >
+                            {poList &&
+                                poList.map((po) => (
+                                    <Box key={po.id}>
+                                        <OrderCard
+                                            order={po}
+                                            sessionKey={session}
+                                            clientCode={code}
+                                            warehouse={warehouse}
+                                        />
+                                    </Box>
+                                ))}
+                        </Masonry>
+                        {poList.length ? (
+                            <Box
+                                alignItems={"center"}
+                                justifyContent={"center"}
+                                display={"flex"}
+                            >
+                                <Pagination
+                                    size="large"
+                                    //count={}
+                                    page={1}
+                                    variant="outlined"
+                                    shape="rounded"
+                                    color="primary"
+                                />
+                            </Box>
+                        ) : (
+                            ""
+                        )}
+                    </Grid>
+                    )}
                 </Card>
             </Container>
         </div >

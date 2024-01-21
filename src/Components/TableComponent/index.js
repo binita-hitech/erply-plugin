@@ -14,8 +14,8 @@ import moment from "moment/moment";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: "#f5f5f5",
-    color: "#2a2a2a",
+    backgroundColor: "#1976d2",
+    color: "#ffffff",
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
@@ -60,7 +60,7 @@ export default function TableComponent1(props) {
 
   const StyledTableRow = styled(TableRow)(({ theme }) => ({
     "&:nth-of-type(odd)": {
-      backgroundColor: "#f5f5f5",
+      backgroundColor: "#ffffff",
     },
     "&:nth-of-type(even)": {
       backgroundColor: "#f5f5f5",

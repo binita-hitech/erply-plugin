@@ -34,21 +34,21 @@ export default function Navbar() {
   return (
     <>
       <Box sx={{ flexGrow: 1, marginBottom: "5px" }}>
-        <AppBar position="static" sx={{ backgroundColor: "#f5f5f5" }}>
+        <AppBar position="static">
           <Toolbar>
             <IconButton
               size="large"
               edge="start"
               color="inherit"
               aria-label="menu"
-              sx={{ mr: 2, color: "#202020" }}
+              sx={{ mr: 2, color: "#ffffff" }}
             >
               <MenuIcon />
             </IconButton>
-            <Typography variant="h5" component="div" sx={{ flexGrow: 1, color: "#202020", fontWeight: 500 }}>
+            <Typography variant="h5" component="div" sx={{ flexGrow: 1, color: "#ffffff", fontWeight: 500 }}>
               eBackoffice
             </Typography>
-            <Button color="inherit" sx={{ color: "#202020", p: 0 }} onClick={handleOpenUserMenu} >{username}</Button>
+            <Button color="inherit" sx={{ color: "#ffffff", p: 0 }} onClick={handleOpenUserMenu}>{username}</Button>
             <Menu
               sx={{ mt: '45px' }}
               id="menu-appbar"

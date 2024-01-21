@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Backdrop, Box, Button, Card, CircularProgress, Container, CssBaseline, Grid, Snackbar, TextField, Typography, styled } from '@mui/material';
+import { useTheme, useMediaQuery, Pagination, Backdrop, Box, Button, Card, CircularProgress, Container, CssBaseline, Grid, Snackbar, TextField, Typography, styled } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
 import dayjs from 'dayjs';
 import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
@@ -14,6 +14,8 @@ import httpclient from '../../utils';
 import MuiAlert from "@mui/material/Alert";
 import moment from 'moment/moment';
 import Product from '../../Components/Product';
+import { Masonry } from "@mui/lab";
+import OrderCard from "../../Components/OrderDetailCard"
 
 const columns = [
     { id: "code", name: "Code" },
@@ -35,7 +37,22 @@ const FlexContent = styled("div")(({ theme }) => ({
     flexDirection: "row",
     fontSize: "17px",
     marginBottom: "20px",
-    alignItems: "flex-start"
+    alignItems: "flex-start",
+    [theme.breakpoints.down("md")]: {
+        flexDirection: "column", // Revert to row for medium and larger screens
+        alignItems: "left",
+    },
+}));
+const FlexContent1 = styled("div")(({ theme }) => ({
+    display: "flex",
+    flexDirection: "row",
+    fontSize: "17px",
+    marginBottom: "20px",
+    alignItems: "flex-start",
+    [theme.breakpoints.down("md")]: {
+        flexDirection: "row", // Revert to row for medium and larger screens
+        alignItems: "flex-start",
+    },
 }));
 
 const FlexInnerTitle = styled("div")(({ theme }) => ({
@@ -46,12 +63,18 @@ const FlexInnerTitle = styled("div")(({ theme }) => ({
     maxWidth: "250px",
     fontWeight: "700",
     fontSize: "14px",
+    [theme.breakpoints.down("md")]: {
+        alignItems: "left",
+
+    },
+
 
 }));
 
+
+
 const Values = styled("div")(({ theme }) => ({
     display: "flex",
-    alignItems: "left",
     justifyContent: "space-between",
     marginLeft: "15px",
     fontWeight: "500",
@@ -66,17 +89,33 @@ const ButtonsCart = styled("div")(({ theme }) => ({
     justifyContent: "space-between",
     alignItems: "center",
     padding: "10px",
+    [theme.breakpoints.down("md")]: {
+        flexDirection: "column", // Revert to row for medium and larger screens
+        width: "100%",
+    },
 
 }));
 
 const LeftButtons = styled("div")(({ theme }) => ({
     display: "flex",
-    gap: "10px"
+    gap: "10px",
+    [theme.breakpoints.down("md")]: {
+        flexDirection: "column", // Revert to row for medium and larger screens
+        width: "100%",
+    },
 }));
 
 
 const RightButton = styled("div")(({ theme }) => ({
+
+    display: "flex",
+    gap: "10px",
     marginLeft: "auto",
+    [theme.breakpoints.down("md")]: {
+        marginTop: "10px",
+        flexDirection: "column", // Revert to row for medium and larger screens
+        width: "100%",
+    },
 }));
 
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -85,7 +124,7 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 
 const GridBlockContent = styled("div")(({ theme }) => ({
     display: "grid",
-    maxWidth: "100%",
+    minWidth: "100%",
     gridTemplateColumns: "auto",
     gap: "1px solid #ccc",
     fontFamily: "'Trebechut' sans-serif",
@@ -265,7 +304,9 @@ const PurchaseOrderDetail = () => {
 
 
     const handleChange = (e, pick) => {
+        console.log("pick", pick);
         const { name, value } = e.target;
+        console.log("pick1", name, value);
         const res = modifiedData.map((mod) => {
             if (mod.id === pick.detailID) {
                 return { ...mod, [name]: value };
@@ -371,9 +412,12 @@ const PurchaseOrderDetail = () => {
         return '';
     };
 
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
     return (
         <div>
-            <Container component="main" maxWidth="l" style={{ textAlign: 'center', marginTop: '20px', paddingBottom: '60px' }}>
+            <Container component="main" maxWidth="l" style={{ textAlign: 'left', marginTop: '20px', paddingBottom: '60px' }}>
                 <CssBaseline />
                 <Card>
 
@@ -394,46 +438,46 @@ const PurchaseOrderDetail = () => {
                                     <Grid container spacing={2}>
                                         {/* Left Side */}
                                         <Grid item xs={12} md={4}>
-                                            <FlexContent>
+                                            <FlexContent1>
                                                 <FlexInnerTitle>
-                                                    <span>Purchase Order No.</span> <span>  </span>
+                                                    <span>Purchase Order No.</span> <span> </span>
                                                 </FlexInnerTitle>
                                                 <Values>{order.poNo}</Values>
-                                            </FlexContent>
+                                            </FlexContent1>
 
-                                            <FlexContent>
+                                            <FlexContent1>
                                                 <FlexInnerTitle>
-                                                    <span>Supplier Name</span> <span>  </span>
+                                                    <span>Supplier Name</span> <span>   </span>
                                                 </FlexInnerTitle>
                                                 <Values>{order.supplierName}</Values>
-                                            </FlexContent>
+                                            </FlexContent1>
 
 
                                         </Grid>
                                         <Grid item xs={12} md={4}>
-                                            <FlexContent>
+                                            <FlexContent1>
                                                 <FlexInnerTitle>
                                                     <span>Date/Time</span> <span>  </span>
                                                 </FlexInnerTitle>
                                                 <Values>{order.dateTime}</Values>
-                                            </FlexContent>
+                                            </FlexContent1>
 
-                                            <FlexContent>
+                                            <FlexContent1>
                                                 <FlexInnerTitle>
-                                                    <span>Status</span> <span>  </span>
+                                                    <span>Status</span> <span> </span>
                                                 </FlexInnerTitle>
                                                 <Values>{order.status}</Values>
-                                            </FlexContent>
+                                            </FlexContent1>
 
 
                                         </Grid>
                                         <Grid item xs={12} md={4}>
-                                            <FlexContent>
+                                            <FlexContent1>
                                                 <FlexInnerTitle>
-                                                    <span>Warehouse</span> <span>  </span>
+                                                    <span>Warehouse</span> <span>   </span>
                                                 </FlexInnerTitle>
                                                 <Values>{order.warehouseName}</Values>
-                                            </FlexContent>
+                                            </FlexContent1>
 
                                         </Grid>
                                     </Grid>
@@ -483,14 +527,14 @@ const PurchaseOrderDetail = () => {
                                                     <span>Invoice Time</span> <span>  </span>
                                                 </FlexInnerTitle>
                                                 <Values><LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                    <DemoContainer components={['TimePicker']}>
+                                                    <DemoContainer components={['TimePicker']} sx={{ width: "100%" }}>
 
                                                         <TimePicker
                                                             label="Invoice Time"
                                                             name="invoiceTime"
                                                             value={invoiceData.invoiceTime}
                                                             onChange={handleChange2}
-                                                            style={{ width: '100%' }}
+
                                                         />
                                                     </DemoContainer>
                                                 </LocalizationProvider></Values>
@@ -551,6 +595,8 @@ const PurchaseOrderDetail = () => {
                             </FlexContent>
                         </Grid>
                     </Box>
+
+                    {!isMobile ? (
                     <Grid item xs={12}>
                         <Product
                             columns={columns}
@@ -567,7 +613,52 @@ const PurchaseOrderDetail = () => {
                             setEdit={setEdit}
                         />
                     </Grid>
-                    <Box pt={0} p={1} >
+                     ) : (
+                    <Grid item xs={12}>
+                        <Masonry
+                            columns={{ xs: 1, sm: 2, md: 3 }}
+                            spacing={3}
+                            sx={{ margin: "0", width: "auto" }}
+                        >
+                            {filteredData &&
+                                filteredData.map((po) => {
+                                    let curr = {};
+                                    if (modifiedData?.length > 0) {
+                                        modifiedData.forEach((m) => {
+                                            if (m.id === po?.detailID) {
+                                                curr = m;
+                                            }
+                                        });
+                                    }
+
+                                    if (curr.barcodeFlag === true) {
+                                        curr.quantity = parseInt(curr.amount, 10);
+                                    }
+
+                                    return (
+                                        <Box key={po.id}>
+                                            <OrderCard
+                                                curr={curr}
+                                                order={po}
+                                                handleChange={handleChange}
+                                                handleChange3={handleChange3}
+                                                modifiedData={modifiedData}
+                                                productDetails={productDetails}
+                                                vat={vat}
+                                                productItems={productItems}
+                                                setProductDetails={setProductDetails}
+                                                setProductItems={setProductItems}
+                                                edit={edit}
+                                                setEdit={setEdit}
+                                            />
+                                        </Box>
+                                    );
+                                })}
+                        </Masonry>
+                    </Grid>
+                    )}
+
+                    <Box pt={0} p={1} textAlign={"center"} >
                         <Grid item xs={12} md={12}>
 
                             <FlexInnerTitle>
@@ -594,49 +685,49 @@ const PurchaseOrderDetail = () => {
                             <Grid item xs={12} md={2}>
                                 <FlexContent>
                                     <FlexInnerTitle>
-                                        <span>Total Rec. Qty</span> <span>  </span>
+                                        <span>Total Rec. Qty</span> <span>  <Values>{total1}</Values>  </span>
                                     </FlexInnerTitle>
-                                    <Values>{total1}</Values>
+
                                 </FlexContent>
                             </Grid>
                             <Grid item xs={12} md={2}>
                                 <FlexContent>
                                     <FlexInnerTitle>
-                                        <span>Net Total</span> <span>  </span>
+                                        <span>Net Total</span> <span><Values>{total}</Values>  </span>
                                     </FlexInnerTitle>
-                                    <Values>{total}</Values>
+
                                 </FlexContent>
                             </Grid>
                             <Grid item xs={12} md={2}>
                                 <FlexContent>
                                     <FlexInnerTitle>
-                                        <span>GST Total</span> <span>  </span>
+                                        <span>GST Total</span> <span>   <Values>0</Values> </span>
                                     </FlexInnerTitle>
-                                    <Values>0</Values>
+
                                 </FlexContent>
                             </Grid>
                             <Grid item xs={12} md={2}>
                                 <FlexContent>
                                     <FlexInnerTitle>
-                                        <span>Gross</span> <span>  </span>
+                                        <span>Gross</span> <span> <Values>{total2}</Values>  </span>
                                     </FlexInnerTitle>
-                                    <Values>{total2}</Values>
+
                                 </FlexContent>
                             </Grid>
                             <Grid item xs={12} md={2}>
                                 <FlexContent>
                                     <FlexInnerTitle>
-                                        <span>Rounding</span> <span>  </span>
+                                        <span>Rounding</span> <span> <Values>0</Values>  </span>
                                     </FlexInnerTitle>
-                                    <Values>0</Values>
+
                                 </FlexContent>
                             </Grid>
                             <Grid item xs={12} md={2}>
                                 <FlexContent>
                                     <FlexInnerTitle>
-                                        <span>Total</span> <span>  </span>
+                                        <span>Total</span> <span> <Values>0</Values> </span>
                                     </FlexInnerTitle>
-                                    <Values>0</Values>
+
                                 </FlexContent>
                             </Grid>
                         </Grid>
@@ -645,7 +736,7 @@ const PurchaseOrderDetail = () => {
                     <ButtonsCart>
 
                         <LeftButtons>
-                            <Button variant="contained" onClick={handleSubmit}>Recieve PO</Button>
+                            <Button variant="contained" onClick={handleSubmit} >Recieve PO</Button>
                             <Button variant="contained">Partial Recieve</Button>
                         </LeftButtons>
                         <RightButton>
