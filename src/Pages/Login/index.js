@@ -79,7 +79,7 @@ const Login = () => {
                 setSnackMessage("Logged in successfully!");
                 setLoading(false);
                 setTimeout(() => {
-                    window.location = "/#/dashboard";
+                    window.location = "/dashboard";
                 }, 1000);
             } else {
                 setLoading(false);

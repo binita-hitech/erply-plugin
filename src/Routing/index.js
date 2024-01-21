@@ -31,7 +31,7 @@ const PublicRoute = ({ children }) => {
 
 const Routing = () => {
     return (
-        <HashRouter>
+        <BrowserRouter>
             <Routes>
                 {/* HOME */}
                 <Route path="/" element={<Login />} />
@@ -39,7 +39,7 @@ const Routing = () => {
                 <Route path="/purchaseorder" element={<PrivateRoute> <PurchaseOrder /> </PrivateRoute>} />
                 <Route path="/purchaseorderdetail/:id" element={<PrivateRoute> <PurchaseOrderDetail /> </PrivateRoute>} />
             </Routes>
-        </HashRouter>
+        </BrowserRouter>
     );
 }
 
