@@ -168,6 +168,7 @@ const OrderCard = (props) => {
                                 }
                                 onChange={(e) => props.handleChange(e, props.order)}
                                 style={{ width: "100%" }}
+                                size="small"
                             /></Values>
                         </FlexContent1>
                     </Grid>
@@ -190,11 +191,12 @@ const OrderCard = (props) => {
                             }
                             onChange={(e) => props.handleChange3(e, props.order)}
                             style={{ width: "100%" }}
+                            size="small"
                             error={props.curr.quantity !== parseInt(props.curr.amount)}
-                            helperText={props.curr.quantity !== parseInt(props.curr.amount) ? "order-qty and recieve-qty must be same" : ""}
+                            //helperText={props.curr.quantity !== parseInt(props.curr.amount) ? "order-qty and recieve-qty must be same" : ""}
                             Inputprops={{
                                 inputprops: {
-                                    max: parseInt(props.order?.amount),
+                                    //max: parseInt(props.order?.amount),
                                     min: 0,
                                 },
                             }}
@@ -218,6 +220,7 @@ const OrderCard = (props) => {
                             }
                             onChange={(e) => props.handleChange(e, props.order)}
                             style={{ width: "100%" }}
+                            size="small"
                         /></Values>
                         </FlexContent1>
                     </Grid>
@@ -237,6 +240,7 @@ const OrderCard = (props) => {
                             }
                             onChange={(e) => props.handleChange(e, props.order)}
                             style={{ width: "100%" }}
+                            size="small"
                         /></Values>
                         </FlexContent1>
                     </Grid>
@@ -245,18 +249,18 @@ const OrderCard = (props) => {
                             <FlexInnerTitle>
                                 <span>GST: </span> <span> </span>
                             </FlexInnerTitle>
-                            <Values><FormControl sx={{ width: "100%" }} size="medium">
+                            <Values><FormControl sx={{ width: "100%" }} size="small">
 
                             <Select
                                 labelId="demo-select-small-label"
                                 id="demo-select-small"
-                                value={props.curr.gstRate}
+                                value={props.curr.gstRate || props.vat[0]?.rate}
                                 name={"gstRate"}
 
                                 onChange={(e) => props.handleChange(e, props.order)}
                             >
                                 {props.vat?.map((vat1) => (
-                                    <MenuItem value={vat1.id}>{vat1.name}</MenuItem>
+                                    <MenuItem value={vat1.rate}>{vat1.name}</MenuItem>
 
                                 ))}
                             </Select>

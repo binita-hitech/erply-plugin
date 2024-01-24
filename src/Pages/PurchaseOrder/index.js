@@ -1,13 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { Backdrop, Box, Button, Card, CircularProgress, Container, CssBaseline, FormControl, FormGroup, Grid, InputAdornment, InputLabel, LinearProgress, MenuItem, Select, TextField, Typography, styled, Pagination, 
+import {
+    Backdrop, Box, Button, Card, CircularProgress, Container, CssBaseline, FormControl, FormGroup, Grid, InputAdornment, InputLabel, LinearProgress, MenuItem, Select, TextField, Typography, styled, Pagination,
     useMediaQuery,
-    useTheme} from '@mui/material';
-import { ArrowBack, Cancel, Search } from '@mui/icons-material';
+    useTheme,
+    Collapse,
+    Snackbar
+} from '@mui/material';
+import { ArrowBack, ArrowForward, Cancel, Close, FilterList, Search } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import httpclient from '../../utils';
 import TableComponent1 from '../../Components/TableComponent';
 import { Masonry } from "@mui/lab";
-import OrderCard from "../../Components/OrderCard"
+import OrderCard from "../../Components/OrderCard";
+import MuiAlert from "@mui/material/Alert";
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 const columns = [
     { id: "poNo", name: "PO#" },
@@ -23,10 +32,54 @@ const columns = [
 
 const StyledFormControl = styled(FormControl)(({ theme }) => ({
     width: "50%", // Default width for all screens
-
+    size: "small",
     [theme.breakpoints.down("md")]: {
         width: "100%", // Set a minimum width for medium and larger screens
     },
+}));
+
+const FilteredBox = styled(Box)(({ theme }) => ({
+    display: 'flex',
+    alignItems: 'flex-start',
+    background: "#f9f9f9",
+    padding: "5px 10px",
+    borderRadius: "5px",
+    "& p": {
+        margin: "3px 0",
+        marginRight: "10px",
+        display: "inline-block",
+        background: "#dedede",
+        borderRadius: "10px",
+        padding: "2px 5px",
+    },
+    "& span": {
+        margin: "3px 3px ",
+
+    },
+    "& svg": {
+        fontSize: "15px",
+        cursor: "pointer",
+        position: "relative",
+        top: "3px",
+        background: theme.palette.primary.dark,
+        color: "#fff",
+        borderRadius: "50%",
+        padding: "2px",
+        marginLeft: "2px",
+    },
+}));
+
+const ButtonBox = styled(Box)(({ theme }) => ({
+    textAlign: "right",
+    display: "flex",
+    gap: "10px",
+    [theme.breakpoints.down("md")]: {
+        display: "flex",
+        flexDirection: "column",  // Set the direction to column for vertical arrangement
+        gap: "3px",
+
+    },
+
 }));
 
 const GridBlockContent = styled("div")(({ theme }) => ({
@@ -74,18 +127,42 @@ const PurchaseOrder = () => {
     var warehouses2 = localStorage.getItem('warehouses');
     var warehouses1 = JSON.parse(warehouses2);
 
-    var [warehouse, setWarehouse] = useState('');
+
     //console.log("wqewe", warehouse);
 
-    const handleChange = (event) => {
-        setWarehouse(event.target.value);
-    };
+
 
     const [loading, setLoading] = useState(false);
     const [poList, setPoList] = useState([]);
     const [warehouses, setWarehouses] = useState({});
-    const [searchValue, setSearchValue] = useState('');
-    const [searchValue1, setSearchValue1] = useState('');
+
+
+    const [page, setPage] = useState(1);
+    const [from, setFrom] = useState(1);
+    const [to, setTo] = useState(
+        20
+    );
+    const [total, setTotal] = useState("");
+    const [rowsPerPage, setRowsPerPage] = useState(20);
+    const [count, setCount] = useState(1);
+    const [filterOpen, setFilterOpen] = useState(true);
+    const [open, setOpen] = useState(false);
+    const [message, setMessage] = useState("");
+    const [messageState, setMessageState] = useState("");
+
+    const [filterData, setFilterData] = useState({
+        warehouse: "",
+        searchValue: "",
+        searchValue1: "",
+        remove: false,
+    });
+
+    const [submittedData, setSubmittedData] = useState({
+        warehouse: "",
+        searchValue: "",
+        searchValue1: "",
+        submit: false,
+    });
 
     useEffect(() => {
         getWarehouses();
@@ -104,19 +181,61 @@ const PurchaseOrder = () => {
             });
     };
 
+
     useEffect(() => {
-        if (warehouse !== '') {
-            getPoList();
+        if (
+            filterData.warehouse === "" &&
+            filterData.searchValue === "" &&
+            filterData.searchValue1 === ""
+        ) {
+            setSubmittedData({
+                ...submittedData,
+                submit: false,
+            });
         }
-    }, [warehouse, searchValue, searchValue1]);
+        if (filterData.warehouse === " ") filterData.warehouse = "";
+
+        if (filterData.searchValue === " ") filterData.searchValue = "";
+
+        if (filterData.searchValue1 === " ") filterData.searchValue1 = "";
+
+        filterData.remove === true && handleFilter();
+    }, [filterData]);
+
+
+    useEffect(() => {
+        let currentpolicy = JSON.parse(localStorage.getItem("orderlist_filter"));
+        currentpolicy !== null && setFilterData(currentpolicy);
+        // console.log("currentpolicy", currentpolicy);
+
+        currentpolicy !== null && setFilterData(currentpolicy);
+        //console.log("currentpolicy", currentpolicy);
+
+        currentpolicy == null
+            ? getPoList()
+            : currentpolicy.warehouse == "" &&
+                currentpolicy.searchValue == "" &&
+                currentpolicy.searchValue1 == "" &&
+                currentpolicy.removed == false
+                ? getPoList()
+                : console.log("orders");
+    }, []);
+
+
 
     const getPoList = () => {
         setLoading(true);
         httpclient
-            .get(`getAllPO.php?sessionKey=${session}&clientCode=${code}&warehouse=${warehouse}&poNo=${searchValue}&supplier=${searchValue1}`)
+            .get(`getAllPO.php?sessionKey=${session}&clientCode=${code}&perPage=${rowsPerPage}`)
             .then(({ data }) => {
                 if (data.msg === "success") {
                     setPoList(data.orderData);
+                    setTotal(data.paginateData.total);
+                    setRowsPerPage(data.paginateData.perPage);
+                    setPage(data.paginateData.pagination);
+                    setFrom(data.paginateData.from);
+                    setTo(data.paginateData.to);
+                    setCount(Math.ceil(data.paginateData.total / data.paginateData.perPage));
                     setLoading(false);
                 } else {
                     console.log("Error!");
@@ -127,26 +246,201 @@ const PurchaseOrder = () => {
     //console.log("warehouses", warehouses);
     console.log("po", poList);
 
-    const handleSearch = () => {
-        setSearchValue(searchValue);
-        setSearchValue1(searchValue1);
+    const handleChangePage = (event, page) => {
+        //setPage(newPage);
+        setLoading(true);
+        submittedData.submit ?
+            httpclient
+                .get(`getAllPO.php?sessionKey=${session}&clientCode=${code}&warehouse=${filterData.warehouse}&poNo=${filterData.searchValue}&supplier=${filterData.searchValue1}&perPage=${rowsPerPage}&pagination=${page}`)
+                .then(({ data }) => {
+                    if (data.msg === "success") {
+                        setPoList(data.orderData);
+                        setTotal(data.paginateData.total);
+                        setRowsPerPage(data.paginateData.perPage);
+                        setPage(data.paginateData.pagination);
+                        setFrom(data.paginateData.from);
+                        setTo(data.paginateData.to);
+                        setCount(Math.ceil(data.paginateData.total / data.paginateData.perPage));
+                        setLoading(false);
+
+                    } else {
+                        console.log("Error!");
+                    }
+                })
+            : httpclient
+                .get(`getAllPO.php?sessionKey=${session}&clientCode=${code}&perPage=${rowsPerPage}&pagination=${page}`)
+                .then(({ data }) => {
+                    if (data.msg === "success") {
+                        setPoList(data.orderData);
+                        setTotal(data.paginateData.total);
+                        setRowsPerPage(data.paginateData.perPage);
+                        setPage(data.paginateData.pagination);
+                        setFrom(data.paginateData.from);
+                        setTo(data.paginateData.to);
+                        setCount(Math.ceil(data.paginateData.total / data.paginateData.perPage));
+                        setLoading(false);
+                    } else {
+                        console.log("Error!");
+                    }
+                })
+
+
     };
 
-    const handleSearch1 = () => {
-        setSearchValue1(searchValue1);
+    const handleChangeRowsPerPage = (event) => {
+        setRowsPerPage(+event.target.value);
+        //setPage(0);
+        setLoading(true);
+        submittedData.submit
+            ?
+            httpclient
+                .get(`getAllPO.php?sessionKey=${session}&clientCode=${code}&warehouse=${filterData.warehouse}&poNo=${filterData.searchValue}&supplier=${filterData.searchValue1}&perPage=${+event.target.value}&pagination=${page}`)
+                .then(({ data }) => {
+                    if (data.msg === "success") {
+                        setPoList(data.orderData);
+                        setTotal(data.paginateData.total);
+                        setRowsPerPage(data.paginateData.perPage);
+                        setPage(data.paginateData.pagination);
+                        setFrom(data.paginateData.from);
+                        setTo(data.paginateData.to);
+                        setCount(Math.ceil(data.paginateData.total / data.paginateData.perPage));
+                        setLoading(false);
+
+                    } else {
+                        console.log("Error!");
+                    }
+                })
+            : httpclient
+                .get(`getAllPO.php?sessionKey=${session}&clientCode=${code}&perPage=${+event.target.value}&pagination=${1}`)
+                .then(({ data }) => {
+                    if (data.msg === "success") {
+                        setPoList(data.orderData);
+                        setTotal(data.paginateData.total);
+                        setRowsPerPage(data.paginateData.perPage);
+                        setPage(data.paginateData.pagination);
+                        setFrom(data.paginateData.from);
+                        setTo(data.paginateData.to);
+                        setCount(Math.ceil(data.paginateData.total / data.paginateData.perPage));
+                        setLoading(false);
+                    } else {
+                        console.log("Error!");
+                    }
+                })
     };
+
+    const handleFilter = () => {
+        setSubmittedData({
+            ...submittedData,
+            warehouse: filterData.warehouse,
+            searchValue: filterData.searchValue,
+            searchValue1: filterData.searchValue1,
+
+            submit: true,
+        });
+
+        filterData.remove = true;
+
+        // const orderlistFilterNew = {
+        //   ...filterData,
+        //   order_status: "Recieved", // Set order_status to "new" for orderlist_filter_new
+        // };
+        localStorage.setItem("orderlist_filter", JSON.stringify(filterData));
+        // localStorage.setItem("orderlist_filter_new", JSON.stringify(orderlistFilterNew)); // Save orderlist_filter_new in localStorage
+
+        setLoading(true);
+        if (
+            filterData.warehouse ||
+            filterData.searchValue ||
+            filterData.searchValue1
+
+        ) {
+            httpclient
+                .get(
+                    `getAllPO.php?sessionKey=${session}&clientCode=${code}&warehouse=${filterData.warehouse}&poNo=${filterData.searchValue}&supplier=${filterData.searchValue1}&perPage=${rowsPerPage}&pagination=${1}`
+                )
+                .then(({ data }) => {
+                    if (data.msg === "success") {
+                        setLoading(false);
+                        setPoList(data.orderData);
+                        setTotal(data.paginateData.total);
+                        setRowsPerPage(data.paginateData.perPage);
+                        setPage(data.paginateData.pagination);
+                        setFrom(data.paginateData.from);
+                        setTo(data.paginateData.to);
+                        setCount(Math.ceil(data.paginateData.total / data.paginateData.perPage));
+                        setLoading(false);
+                    }
+                });
+        } else {
+            getPoList();
+        }
+    };
+
+    const handleChangeFilter = (e) => {
+        const { name, value } = e.target;
+        setFilterData({
+            ...filterData,
+            [name]: value,
+            remove: false,
+        });
+    };
+    // console.log('filter data', filterData);
+
+    const handleRemove = (data) => {
+
+        setFilterData({
+            ...filterData,
+            [data]: "",
+            remove: true,
+        });
+
+        setSubmittedData({
+            ...submittedData,
+            [data]: "",
+        });
+    }
+
 
     const handleCancel = () => {
-        setSearchValue('');
+        setFilterData({
+            ...filterData,
+            searchValue: "",
+            remove: true,
+        });
+
+        setSubmittedData({
+            ...submittedData,
+            searchValue: "",
+        });
     };
 
     const handleCancel1 = () => {
-        setSearchValue1('');
+        setFilterData({
+            ...filterData,
+            searchValue1: "",
+            remove: true,
+        });
+
+        setSubmittedData({
+            ...submittedData,
+            searchValue1: "",
+        });
+    };
+
+    const hadleFilterOpen = () => {
+        setFilterOpen((prev) => !prev);
+    };
+
+    const handleClose = (event, reason) => {
+        if (reason === "clickaway") {
+            return;
+        }
+        setOpen(false);
     };
 
     const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
 
     return (
         <div>
@@ -161,97 +455,171 @@ const PurchaseOrder = () => {
                                         <Box textAlign={"left"}>
                                             Purchase Order Recieving
                                         </Box>
-                                        <Box textAlign={"right"}>
+
+                                        <ButtonBox>
+
+
                                             <Link to="/dashboard">
                                                 <Button color="primary" variant="contained" >
                                                     <ArrowBack sx={{ marginRight: "10px" }} />
                                                     <b>Back</b>
                                                 </Button>
                                             </Link>
-                                        </Box>
+                                            <Button color="primary" variant="contained"
+                                                onClick={hadleFilterOpen}
+                                            >
+                                                Filter <FilterList style={{ marginLeft: "5px" }} fontSize="small" />
+                                            </Button>
+                                        </ButtonBox>
                                     </GridBlockTitle>
 
                                     {/* <Box pt={2} pb={1}> */}
-                                    <Box p={2} pb={2} sx={{ display: 'flex', alignItems: 'flex-end' }}>
-                                        <FlexContent>
-                                            <>
-                                                <FormControl fullWidth sx={{ flex: 1, marginRight: '8px' }}>
-                                                    <TextField
+                                    <Collapse in={filterOpen}>
+                                        <Card>
+                                            <Box p={2} pb={2} sx={{ display: 'flex', alignItems: 'flex-end' }}>
+                                                <FlexContent>
+                                                    <>
+                                                        <FormControl fullWidth sx={{ flex: 1, marginRight: '8px' }}>
+                                                            <TextField
+                                                                size="small"
+                                                                //variant="standard"
+                                                                placeholder="Filter by PO#"
+                                                                value={filterData.searchValue}
+                                                                name="searchValue"
+                                                                onChange={handleChangeFilter}
+                                                                InputProps={{
+                                                                    endAdornment: (
+                                                                        <InputAdornment position="end">
+                                                                            {filterData.searchValue ? (
+                                                                                <Cancel
+                                                                                    onClick={handleCancel}
+                                                                                    style={{ cursor: 'pointer' }}
+                                                                                />
+                                                                            ) : null}
+                                                                            <Search
+                                                                                onClick={handleFilter}
+                                                                                style={{ cursor: 'pointer' }}
+                                                                            />
+                                                                        </InputAdornment>
+                                                                    ),
+                                                                }}
+                                                            />
+                                                        </FormControl>
+
+                                                        <FormControl fullWidth sx={{ flex: 1 }}>
+                                                            <TextField
+                                                                size="small"
+                                                                //variant="standard"
+                                                                placeholder="Filter by Supplier"
+                                                                value={filterData.searchValue1}
+                                                                name="searchValue1"
+                                                                onChange={handleChangeFilter}
+                                                                InputProps={{
+                                                                    endAdornment: (
+                                                                        <InputAdornment position="end">
+                                                                            {filterData.searchValue1 ? (
+                                                                                <Cancel
+                                                                                    onClick={handleCancel1}
+                                                                                    style={{ cursor: 'pointer' }}
+                                                                                />
+                                                                            ) : null}
+                                                                            <Search
+                                                                                onClick={handleFilter}
+                                                                                style={{ cursor: 'pointer' }}
+                                                                            />
+                                                                        </InputAdornment>
+                                                                    ),
+                                                                }}
+                                                            />
+                                                        </FormControl>
+                                                    </>
+                                                </FlexContent>
+                                            </Box>
+
+                                            {/* </Box> */}
+
+                                            <Box p={2} pb={2} sx={{ display: 'flex', alignItems: 'flex-end' }}>
+
+                                                <StyledFormControl>
+                                                    <InputLabel size="small" id="demo-simple-select-standard-label">Search By Warehouse</InputLabel>
+                                                    <Select
+                                                        labelId="demo-simple-select-standard-label"
+                                                        id="demo-simple-select-standard"
+                                                        value={filterData.warehouse}
+                                                        onChange={handleChangeFilter}
+                                                        label="Search By Warehouse"
+                                                        name="warehouse"
                                                         size="small"
-                                                        //variant="standard"
-                                                        placeholder="Filter by PO#"
-                                                        value={searchValue}
-                                                        onChange={(e) => setSearchValue(e.target.value)}
-                                                        InputProps={{
-                                                            endAdornment: (
-                                                                <InputAdornment position="end">
-                                                                    {searchValue ? (
-                                                                        <Cancel
-                                                                            onClick={handleCancel}
-                                                                            style={{ cursor: 'pointer' }}
-                                                                        />
-                                                                    ) : null}
-                                                                    <Search
-                                                                        onClick={handleSearch}
-                                                                        style={{ cursor: 'pointer' }}
-                                                                    />
-                                                                </InputAdornment>
-                                                            ),
-                                                        }}
-                                                    />
-                                                </FormControl>
 
-                                                <FormControl fullWidth sx={{ flex: 1 }}>
-                                                    <TextField
-                                                        size="small"
-                                                        //variant="standard"
-                                                        placeholder="Filter by Supplier"
-                                                        value={searchValue1}
-                                                        onChange={(e) => setSearchValue1(e.target.value)}
-                                                        InputProps={{
-                                                            endAdornment: (
-                                                                <InputAdornment position="end">
-                                                                    {searchValue1 ? (
-                                                                        <Cancel
-                                                                            onClick={handleCancel1}
-                                                                            style={{ cursor: 'pointer' }}
-                                                                        />
-                                                                    ) : null}
-                                                                    <Search
-                                                                        onClick={handleSearch1}
-                                                                        style={{ cursor: 'pointer' }}
-                                                                    />
-                                                                </InputAdornment>
-                                                            ),
-                                                        }}
-                                                    />
-                                                </FormControl>
-                                            </>
-                                        </FlexContent>
-                                    </Box>
+                                                    >   <MenuItem value={''}>Pick Warehouse </MenuItem>
 
-                                    {/* </Box> */}
+                                                        {warehouses1 && warehouses1.map((warehouse, index) => (
+                                                            <MenuItem value={warehouse.warehouseID}>{warehouse.warehouseName}</MenuItem>
+                                                        ))}
+                                                    </Select>
+                                                </StyledFormControl>
 
-                                    <Box p={2} pb={2} sx={{ display: 'flex', alignItems: 'flex-end' }}>
+                                            </Box>
 
-                                        <StyledFormControl>
-                                            <InputLabel id="demo-simple-select-standard-label">Search By Warehouse</InputLabel>
-                                            <Select
-                                                labelId="demo-simple-select-standard-label"
-                                                id="demo-simple-select-standard"
-                                                value={warehouse}
-                                                onChange={handleChange}
-                                                label="Search By Warehouse"
 
-                                            >   <MenuItem value={''}>Pick Warehouse </MenuItem>
 
-                                                {warehouses1 && warehouses1.map((warehouse, index) => (
-                                                    <MenuItem value={warehouse.warehouseID}>{warehouse.warehouseName}</MenuItem>
-                                                ))}
-                                            </Select>
-                                        </StyledFormControl>
+                                            <Box textAlign={"right"} padding={"10px"}>
 
-                                    </Box>
+                                                <Button color="primary" variant="contained" onClick={handleFilter} >
+                                                    <b>Filter</b>
+                                                    <ArrowForward sx={{ marginLeft: "10px" }} />
+
+                                                </Button>
+
+                                            </Box>
+                                        </Card>
+                                    </Collapse>
+                                    {submittedData.warehouse ||
+                                        submittedData.searchValue ||
+                                        submittedData.searchValue1 ? (
+                                        <Card>
+
+                                            <FilteredBox>
+                                                <span>Filtered: </span>
+                                                {submittedData.warehouse && (
+                                                    <p>
+                                                        <span>
+                                                            Warehouse: {poList[0]?.warehouseName}
+
+                                                        </span>
+                                                        <Close
+                                                            fontSize="small"
+                                                            onClick={() => handleRemove("warehouse")}
+                                                        />
+                                                    </p>
+                                                )}
+
+                                                {submittedData.searchValue && (
+                                                    <p>
+                                                        <span>PO Number: {submittedData.searchValue}</span>
+                                                        <Close
+                                                            fontSize="small"
+                                                            onClick={() => handleRemove("searchValue")}
+                                                        />
+                                                    </p>
+                                                )}
+                                                {submittedData.searchValue1 && (
+                                                    <p>
+                                                        <span>Supplier: {submittedData.searchValue1}</span>
+                                                        <Close
+                                                            fontSize="small"
+                                                            onClick={() => handleRemove("searchValue1")}
+                                                        />
+                                                    </p>
+                                                )}
+
+                                            </FilteredBox>
+
+                                        </Card>
+                                    ) : (
+                                        <Box></Box>
+                                    )}
+
 
 
                                 </GridBlockContent>
@@ -270,57 +638,79 @@ const PurchaseOrder = () => {
                         </Typography> */}
                     </Backdrop>
                     {!isMobile ? (
-                    <Grid item xs={12}>
-                        <TableComponent1
-                            columns={columns}
-                            rows={poList}
-                            sessionKey={session}
-                            clientCode={code}
-                            warehouse={warehouse}
-                        />
+                        <Grid item xs={12}>
+                            <TableComponent1
+                                columns={columns}
+                                rows={poList}
+                                sessionKey={session}
+                                clientCode={code}
+                                warehouse={filterData.warehouse}
+                                rowsPerPage={rowsPerPage}
+                                page={page}
+                                total={total && total}
+                                fromTable={from}
+                                toTable={to}
+                                handleChangePage={handleChangePage}
+                                handleChangeRowsPerPage={handleChangeRowsPerPage}
+                            />
 
-                    </Grid>
+                        </Grid>
                     ) : (
-                    <Grid item xs={12}>
-                        <Masonry
-                            columns={{ xs: 1, sm: 2, md: 3 }}
-                            spacing={3}
-                            sx={{ margin: "0", width: "auto" }}
-                        >
-                            {poList &&
-                                poList.map((po) => (
-                                    <Box key={po.id}>
-                                        <OrderCard
-                                            order={po}
-                                            sessionKey={session}
-                                            clientCode={code}
-                                            warehouse={warehouse}
-                                        />
-                                    </Box>
-                                ))}
-                        </Masonry>
-                        {poList.length ? (
-                            <Box
-                                alignItems={"center"}
-                                justifyContent={"center"}
-                                display={"flex"}
+                        <Grid item xs={12}>
+                            <Masonry
+                                columns={{ xs: 1, sm: 2, md: 3 }}
+                                spacing={3}
+                                sx={{ margin: "0", width: "auto" }}
                             >
-                                <Pagination
-                                    size="large"
-                                    //count={}
-                                    page={1}
-                                    variant="outlined"
-                                    shape="rounded"
-                                    color="primary"
-                                />
-                            </Box>
-                        ) : (
-                            ""
-                        )}
-                    </Grid>
+                                {poList &&
+                                    poList.map((po) => (
+                                        <Box key={po.id}>
+                                            <OrderCard
+                                                order={po}
+                                                sessionKey={session}
+                                                clientCode={code}
+                                                warehouse={filterData.warehouse}
+                                            />
+                                        </Box>
+                                    ))}
+                            </Masonry>
+                            {poList.length ? (
+                                <Box
+                                    alignItems={"center"}
+                                    justifyContent={"center"}
+                                    display={"flex"}
+                                >
+                                    <Pagination
+                                        size="large"
+                                        count={count}
+                                        page={page}
+                                        onChange={handleChangePage}
+                                        variant="outlined"
+                                        shape="rounded"
+                                        color="primary"
+                                    />
+                                </Box>
+                            ) : (
+                                ""
+                            )}
+                        </Grid>
                     )}
                 </Card>
             </Container>
+            <Snackbar
+                autoHideDuration={3000}
+                anchorOrigin={{ vertical: "top", horizontal: "right" }}
+                open={open}
+                onClose={handleClose}
+            >
+                <Alert
+                    onClose={handleClose}
+                    severity={messageState}
+                    sx={{ width: "100%" }}
+                >
+                    {message}
+                </Alert>
+            </Snackbar>
         </div >
     );
 }

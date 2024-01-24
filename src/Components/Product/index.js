@@ -73,7 +73,8 @@ const Product = (props) => {
                             curr.itemName
                           }
                           onChange={(e) => props.handleChange(e, row)}
-                          style={{ width: "260px" }}
+                          style={{ width: "180px" }}
+                          size="small"
                         />
                       </TableCell>
                       <TableCell>{row.soNumber}</TableCell>
@@ -91,12 +92,13 @@ const Product = (props) => {
                               : curr.quantity || 1
                           }
                           onChange={(e) => props.handleChange3(e, row)}
-                          style={{ width: "160px" }}
+                          style={{ width: "80px" }}
+                          size="small"
                           error={curr.quantity !== parseInt(curr.amount)}
-                          helperText={curr.quantity !== parseInt(curr.amount) ? "order-qty and recieve-qty must be same" : ""}
+                          //helperText={curr.quantity !== parseInt(curr.amount) ? "order-qty and recieve-qty must be same" : ""}
                           InputProps={{
                             inputProps: {
-                              max: parseInt(row?.amount),
+                              //max: parseInt(row?.amount),
                               min: 0,
                             },
                           }}
@@ -113,7 +115,8 @@ const Product = (props) => {
                             curr.price
                           }
                           onChange={(e) => props.handleChange(e, row)}
-                          style={{ width: "120px" }}
+                          style={{ width: "80px" }}
+                          size="small"
                         />
                       </TableCell>
                       <TableCell>
@@ -127,22 +130,23 @@ const Product = (props) => {
                             curr.discount
                           }
                           onChange={(e) => props.handleChange(e, row)}
-                          style={{ width: "120px" }}
+                          style={{ width: "80px"}}
+                          size="small"
                         />
                       </TableCell>
                       <TableCell>
-                        <FormControl sx={{ m: 1, minWidth: 120 }} size="medium">
+                        <FormControl sx={{ m: 1, minWidth: 80 }} size="small">
 
                           <Select
                             labelId="demo-select-small-label"
                             id="demo-select-small"
-                            value={curr.gstRate}
+                            value={curr.gstRate || props.vat[0]?.rate}
                             name={"gstRate"}
 
                             onChange={(e) => props.handleChange(e, row)}
                           >
                             {props.vat.map((vat1) => (
-                              <MenuItem value={vat1.id}>{vat1.name}</MenuItem>
+                              <MenuItem value={vat1.rate}>{vat1.name}</MenuItem>
 
                             ))}
                           </Select>

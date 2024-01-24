@@ -7,10 +7,14 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Button, TablePagination, IconButton } from "@mui/material";
-import { Download, KeyboardArrowDown, KeyboardArrowUp, UnfoldMore } from "@mui/icons-material";
+import { Button, TablePagination, IconButton, useTheme, TableFooter } from "@mui/material";
+import {
+  Download, KeyboardArrowDown, KeyboardArrowUp, PropaneSharp, UnfoldMore, KeyboardArrowLeft,
+  KeyboardArrowRight,
+} from "@mui/icons-material";
 import { Link } from "react-router-dom";
 import moment from "moment/moment";
+import PropTypes from "prop-types";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -34,23 +38,59 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   },
 }));
 
+function TablePaginationActions(props) {
+  const { count, page, rowsPerPage, onPageChange } = props;
+  const theme = useTheme();
+
+  const handleBackButtonClick = (event) => {
+    onPageChange(event, page - 1);
+  };
+
+  const handleNextButtonClick = (event) => {
+    onPageChange(event, page + 1);
+  };
+
+  return (
+    <div style={{ flexShrink: "0" }}>
+      <IconButton
+        onClick={handleBackButtonClick}
+        disabled={page === 1}
+        aria-label="previous page"
+      >
+        {theme.direction === "rtl" ? (
+          <KeyboardArrowRight />
+        ) : (
+          <KeyboardArrowLeft />
+        )}
+      </IconButton>
+      <IconButton
+        onClick={handleNextButtonClick}
+        disabled={page >= Math.ceil(count / rowsPerPage)}
+        aria-label="next page"
+      >
+        {theme.direction === "rtl" ? (
+          <KeyboardArrowLeft />
+        ) : (
+          <KeyboardArrowRight />
+        )}
+      </IconButton>
+    </div>
+  );
+}
+
+TablePaginationActions.propTypes = {
+  count: PropTypes.number.isRequired,
+  onPageChange: PropTypes.func.isRequired,
+  page: PropTypes.number.isRequired,
+  rowsPerPage: PropTypes.number.isRequired,
+};
+
 
 export default function TableComponent1(props) {
 
-  //console.log("prrpss", props);
+  console.log("prrpss", props);
 
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(20);
-  const [editedRow, setEditedRow] = React.useState(null)
-  
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
 
   const state = {
     clientCode: props.clientCode,
@@ -104,9 +144,9 @@ export default function TableComponent1(props) {
             <TableBody>
               {props.rows.length > 0 ? (
                 props.rows
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  //.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => {
-                  
+
                     return (
                       <StyledTableRow
                         key={Math.random()}
@@ -195,7 +235,7 @@ export default function TableComponent1(props) {
                   })
               ) : (
                 <TableRow sx={{ position: "relative", height: "50px" }}>
-                  <StyledTableCell sx={{ position: "absolute", right: "35%", minWidth: "400px", borderBottom: "none" }}>
+                  <StyledTableCell sx={{ position: "absolute", right: "45%", minWidth: "400px", borderBottom: "none" }}>
                     No Purchase Order Found
                   </StyledTableCell>
                 </TableRow>
@@ -206,15 +246,27 @@ export default function TableComponent1(props) {
 
         </TableContainer>
         {props.footer !== false && (
-          <TablePagination
-            rowsPerPageOptions={[20, 50, 100]}
-            component="div"
-            count={props.rows.length || 0}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
+          <TableFooter sx={{ display: "flex", justifyContent: "flex-end"}}>
+            <TableRow >
+              <TablePagination
+                rowsPerPageOptions={[20, 50, 70, 100]}
+                component="div"
+                count={props.total && props.total}
+                SelectProps={{
+                  native: true,
+                }}
+                labelDisplayedRows={() =>
+                  `${props.fromTable !== null ? props.fromTable : "0"} - ${props.toTable !== null ? props.toTable : "0"
+                  } to ${props.total}`
+                }
+                rowsPerPage={props.rowsPerPage}
+                page={props.page}
+                onPageChange={props.handleChangePage}
+                onRowsPerPageChange={props.handleChangeRowsPerPage}
+                ActionsComponent={TablePaginationActions}
+              />
+            </TableRow>
+          </TableFooter>
         )}
 
       </Paper>

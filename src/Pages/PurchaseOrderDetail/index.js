@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTheme, useMediaQuery, Pagination, Backdrop, Box, Button, Card, CircularProgress, Container, CssBaseline, Grid, Snackbar, TextField, Typography, styled } from '@mui/material';
-import { ArrowBack } from '@mui/icons-material';
+import { ArrowBack, Close } from '@mui/icons-material';
 import dayjs from 'dayjs';
 import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -38,11 +38,11 @@ const FlexContent = styled("div")(({ theme }) => ({
     fontSize: "17px",
     marginBottom: "20px",
     alignItems: "flex-start",
-   
+
     [theme.breakpoints.down("md")]: {
         flexDirection: "column", // Revert to row for medium and larger screens
         alignItems: "left",
-        
+
     },
 }));
 const FlexContent1 = styled("div")(({ theme }) => ({
@@ -51,13 +51,13 @@ const FlexContent1 = styled("div")(({ theme }) => ({
     fontSize: "17px",
     marginBottom: "20px",
     alignItems: "flex-start",
-    
+
     [theme.breakpoints.down("md")]: {
-        
+
         flexDirection: "row", // Revert to row for medium and larger screens
         alignItems: "flex-start",
-       
-       
+
+
     },
 }));
 
@@ -174,6 +174,20 @@ const GridBlockTitle = styled("div")(({ theme }) => ({
 
 }));
 
+const Reddiv = styled("div")(({ theme }) => ({
+    background: "#fc4343",
+    color: "#fff",
+    textAlign: "center",
+    padding: "5px",
+    position: "relative",
+    "& svg": {
+        position: "absolute",
+        right: "10px",
+        fontSize: "20px",
+        cursor: "pointer",
+    },
+}));
+
 
 const PurchaseOrderDetail = () => {
     const { id } = useParams();
@@ -195,7 +209,7 @@ const PurchaseOrderDetail = () => {
     const [pickupList, setPickupList] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
     const [barcode, setBarcode] = useState("");
-
+    const [openExceptionBox, setOpenExceptionBox] = useState(true);
 
     var sessionKey = localStorage.getItem('sessionKey');
     var session = JSON.parse(sessionKey);
@@ -206,23 +220,36 @@ const PurchaseOrderDetail = () => {
     var warehouses2 = localStorage.getItem('warehouses');
     var warehouses1 = JSON.parse(warehouses2);
 
+
     const [invoiceData, setInvoiceData] = useState({
         invoiceDate: "",
         invoiceNumber: "",
         invoiceTime: "",
-        invoiceDueDays: "",
+        invoiceDueDays: "14",
         notes: "",
     });
 
+    // const handleChange1 = (date) => {
+    //     console.log("date", date);
+    //     const formattedDate = dayjs(date).format('DD-MM-YYYY');
+    //     setInvoiceData({
+    //         ...invoiceData,
+    //         invoiceDate: formattedDate,
+    //     });
+    // };
+
+    // const [invoiceData, setInvoiceData] = useState({
+    //     invoiceDate: dayjs().format('DD-MM-YYYY'), // Set default value to today's date
+    //   });
+
     const handleChange1 = (date) => {
-        const formattedDate = dayjs(date).format('MM-DD-YYYY');
-        setInvoiceData({
-            ...invoiceData,
-            invoiceDate: formattedDate,
-        });
+        console.log("date", date);
+        setInvoiceData({ ...invoiceData, invoiceDate: date.format('DD-MM-YYYY') });
     };
 
+
     const handleChange2 = (selectedTime) => {
+        console.log("time", selectedTime);
         const formattedTime = selectedTime.format('hh:mm A'); // Adjust the format as needed
         setInvoiceData({
             ...invoiceData,
@@ -274,6 +301,7 @@ const PurchaseOrderDetail = () => {
         var allData = [];
         pickupList &&
             pickupList.map((pick) => {
+               
                 var newData = {
                     quantity: 0,
                     itemName: pick.itemName,
@@ -281,7 +309,7 @@ const PurchaseOrderDetail = () => {
                     discount: pick.discount,
                     amount: pick.amount,
                     code: pick.code,
-                    gstRate: 0,
+                    gstRate: vat[0]?.rate,
                     costTotal: 0,
                     totalWithGst: 0,
                     id: pick.detailID,
@@ -333,8 +361,8 @@ const PurchaseOrderDetail = () => {
 
 
     const handleChange = (e, pick) => {
-        
-        const { name, value } = e.target;       
+
+        const { name, value } = e.target;
         const res = modifiedData.map((mod) => {
             if (mod.id === pick.detailID) {
                 return { ...mod, [name]: value };
@@ -369,9 +397,11 @@ const PurchaseOrderDetail = () => {
                 let currValue;
                 if (e.target.value <= 0) {
                     currValue = 0;
-                } else if (e.target.value >= parseInt(pick.amount)) {
-                    currValue = parseInt(pick.amount);
-                } else {
+                }
+                // else if (e.target.value >= parseInt(pick.amount)) {
+                //     currValue = parseInt(pick.amount);
+                // } 
+                else {
                     currValue = e.target.value;
                 }
                 return {
@@ -382,7 +412,7 @@ const PurchaseOrderDetail = () => {
                 return mod;
             }
         });
-        
+
         setModifiedData(updatedData);
     };
 
@@ -429,15 +459,15 @@ const PurchaseOrderDetail = () => {
     const calculateDueDate = () => {
         const dueDays = parseInt(invoiceData.invoiceDueDays);
         if (!isNaN(dueDays)) {
-            const currentDate = moment(); 
+            const currentDate = moment();
             const futureDate = currentDate.add(dueDays, 'days');
-            return futureDate.format('ddd, MMM Do YYYY, h:mm:ss a'); 
+            return futureDate.format('ddd, MMM Do YYYY, h:mm:ss a');
         }
         return '';
     };
 
     const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
     return (
         <div>
@@ -458,6 +488,14 @@ const PurchaseOrderDetail = () => {
                                         </Link>
                                     </Box>
                                 </GridBlockTitle>
+                                {(!loading && !order.supplierName) ?
+                                    openExceptionBox && (
+                                        <Reddiv>
+                                            <span>This order has no supplier. Please contact Erply for further access.</span>
+                                            <Close onClick={() => setOpenExceptionBox(false)} />
+                                        </Reddiv>
+                                    ) : null}
+
                                 <Box pt={2} p={4} sx={{ margin: "20px", backgroundColor: "#f5f5f5" }}>
                                     <Grid container spacing={2}>
                                         {/* Left Side */}
@@ -515,18 +553,20 @@ const PurchaseOrderDetail = () => {
                                                 <FlexInnerTitle>
                                                     <span>Invoice Date</span> <span>  </span>
                                                 </FlexInnerTitle>
-                                                <Values> <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                    <DemoContainer components={['DatePicker']} sx={{ width: "100%" }}>
-                                                        <DatePicker
-                                                            name="invoiceDate"
-                                                            label="Invoice Date"
-                                                            format="MM-DD-YYYY"
-                                                            value={invoiceData.invoiceDate}
-                                                            onChange={handleChange1}
+                                                <Values>
+                                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                        <DemoContainer components={['DatePicker']} sx={{ width: "100%" }}>
+                                                            <DatePicker
+                                                                name="invoiceDate"
+                                                                label="Invoice Date"
+                                                                format="DD-MM-YYYY"
+                                                                //value={invoiceData.invoiceDate}
+                                                                value={invoiceData.invoiceDate}
+                                                                onChange={handleChange1}
 
-                                                        />
-                                                    </DemoContainer>
-                                                </LocalizationProvider></Values>
+                                                            />
+                                                        </DemoContainer>
+                                                    </LocalizationProvider></Values>
                                             </FlexContent>
 
                                             <FlexContent>
@@ -621,65 +661,65 @@ const PurchaseOrderDetail = () => {
                     </Box>
 
                     {!isMobile ? (
-                    <Grid item xs={12}>
-                        <Product
-                            columns={columns}
-                            rows={filteredData}
-                            handleChange={handleChange}
-                            handleChange3={handleChange3}
-                            modifiedData={modifiedData}
-                            productDetails={productDetails}
-                            vat={vat}
-                            productItems={productItems}
-                            setProductDetails={setProductDetails}
-                            setProductItems={setProductItems}
-                            edit={edit}
-                            setEdit={setEdit}
-                        />
-                    </Grid>
-                     ) : (
-                    <Grid item xs={12}>
-                        <Masonry
-                            columns={{ xs: 1, sm: 2, md: 3 }}
-                            spacing={3}
-                            sx={{ margin: "0", width: "auto" }}
-                        >
-                            {filteredData &&
-                                filteredData.map((po) => {
-                                    let curr = {};
-                                    if (modifiedData?.length > 0) {
-                                        modifiedData.forEach((m) => {
-                                            if (m.id === po?.detailID) {
-                                                curr = m;
-                                            }
-                                        });
-                                    }
+                        <Grid item xs={12}>
+                            <Product
+                                columns={columns}
+                                rows={filteredData}
+                                handleChange={handleChange}
+                                handleChange3={handleChange3}
+                                modifiedData={modifiedData}
+                                productDetails={productDetails}
+                                vat={vat}
+                                productItems={productItems}
+                                setProductDetails={setProductDetails}
+                                setProductItems={setProductItems}
+                                edit={edit}
+                                setEdit={setEdit}
+                            />
+                        </Grid>
+                    ) : (
+                        <Grid item xs={12}>
+                            <Masonry
+                                columns={{ xs: 1, sm: 2, md: 3 }}
+                                spacing={3}
+                                sx={{ margin: "0", width: "auto" }}
+                            >
+                                {filteredData &&
+                                    filteredData.map((po) => {
+                                        let curr = {};
+                                        if (modifiedData?.length > 0) {
+                                            modifiedData.forEach((m) => {
+                                                if (m.id === po?.detailID) {
+                                                    curr = m;
+                                                }
+                                            });
+                                        }
 
-                                    if (curr.barcodeFlag === true) {
-                                        curr.quantity = parseInt(curr.amount, 10);
-                                    }
+                                        if (curr.barcodeFlag === true) {
+                                            curr.quantity = parseInt(curr.amount, 10);
+                                        }
 
-                                    return (
-                                        <Box key={po.id}>
-                                            <OrderCard
-                                                curr={curr}
-                                                order={po}
-                                                handleChange={handleChange}
-                                                handleChange3={handleChange3}
-                                                modifiedData={modifiedData}
-                                                productDetails={productDetails}
-                                                vat={vat}
-                                                productItems={productItems}
-                                                setProductDetails={setProductDetails}
-                                                setProductItems={setProductItems}
-                                                edit={edit}
-                                                setEdit={setEdit}
-                                            />
-                                        </Box>
-                                    );
-                                })}
-                        </Masonry>
-                    </Grid>
+                                        return (
+                                            <Box key={po.id}>
+                                                <OrderCard
+                                                    curr={curr}
+                                                    order={po}
+                                                    handleChange={handleChange}
+                                                    handleChange3={handleChange3}
+                                                    modifiedData={modifiedData}
+                                                    productDetails={productDetails}
+                                                    vat={vat}
+                                                    productItems={productItems}
+                                                    setProductDetails={setProductDetails}
+                                                    setProductItems={setProductItems}
+                                                    edit={edit}
+                                                    setEdit={setEdit}
+                                                />
+                                            </Box>
+                                        );
+                                    })}
+                            </Masonry>
+                        </Grid>
                     )}
 
                     <Box pt={0} p={1} textAlign={"center"} >
