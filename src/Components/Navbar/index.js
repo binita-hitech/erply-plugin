@@ -8,9 +8,10 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-
+import { useNavigate } from "react-router";
 
 export default function Navbar() {
+  const navigate = useNavigate();
   var userName = localStorage.getItem('userName');
   var username = JSON.parse(userName);
 
@@ -27,7 +28,7 @@ export default function Navbar() {
   const handleLogout = () => {
     localStorage.clear();
     setTimeout(() => {
-      window.location = "/";
+      navigate("/");
     }, 500);
   }
 

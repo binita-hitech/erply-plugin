@@ -19,7 +19,7 @@ import TableRow from '@mui/material/TableRow';
 
 
 const Product = (props) => {
-  //console.log("prod.props", props); 
+  console.log("prod.props", props); 
   return (
     <>
       <Container maxWidth="lx">
@@ -28,22 +28,27 @@ const Product = (props) => {
           <Table>
             <TableHead style={{ background: "#1976d2", color: "#f5f5f5" }}>
               <TableRow>
-                <TableCell style={{color: "#f5f5f5" }}>Code</TableCell>
-                <TableCell style={{color: "#f5f5f5" }}>Product</TableCell>
-                <TableCell style={{color: "#f5f5f5" }}>SO</TableCell>
-                <TableCell style={{color: "#f5f5f5" }}>Order Qty</TableCell>
-                <TableCell style={{color: "#f5f5f5" }}>Recieve Qty</TableCell>
-                <TableCell style={{color: "#f5f5f5" }}>Price</TableCell>
-                <TableCell style={{color: "#f5f5f5" }}>Discount(%)</TableCell>
-                <TableCell style={{color: "#f5f5f5" }}>GST(%)</TableCell>
-                <TableCell style={{color: "#f5f5f5" }}>Net Total</TableCell>
-                <TableCell style={{color: "#f5f5f5" }}>Gross Total</TableCell>
+                <TableCell style={{ color: "#f5f5f5" }}>Code</TableCell>
+                <TableCell style={{ color: "#f5f5f5" }}>Product</TableCell>
+                <TableCell style={{ color: "#f5f5f5" }}>SO</TableCell>
+                <TableCell style={{ color: "#f5f5f5" }}>Order Qty</TableCell>
+                <TableCell style={{ color: "#f5f5f5" }}>Recieve Qty</TableCell>
+                <TableCell style={{ color: "#f5f5f5" }}>Price</TableCell>
+                <TableCell style={{ color: "#f5f5f5" }}>Discount(%)</TableCell>
+                <TableCell style={{ color: "#f5f5f5" }}>GST(%)</TableCell>
+                <TableCell style={{ color: "#f5f5f5" }}>Net Total</TableCell>
+                <TableCell style={{ color: "#f5f5f5" }}>Gross Total</TableCell>
                 {/* Actions */}
               </TableRow>
             </TableHead>
             <TableBody>
               {props.rows.length > 0 ? (
                 props.rows.map((row) => {
+                  const handleSO = (saleID) => {
+                    console.log("handleso", saleID);
+                    const url = `https://au.erply.com/${props.code}/?lang=eng&section=invoice&authKey=${props.session}&edit=${saleID}`;
+                    window.open(url, '_blank');
+                  };
                   var curr = {};
                   props.modifiedData?.length > 0 &&
                     props.modifiedData.map((m) => {
@@ -77,7 +82,7 @@ const Product = (props) => {
                           size="small"
                         />
                       </TableCell>
-                      <TableCell>{row.soNumber}</TableCell>
+                      <TableCell><span style={{cursor:"pointer", color:"royalblue", textDecoration: "underline"}} onClick={() => handleSO(row.saleID)}>{row.soNumber}</span></TableCell>
                       <TableCell>{row.amount}</TableCell>
                       <TableCell>
                         <TextField
@@ -130,7 +135,7 @@ const Product = (props) => {
                             curr.discount
                           }
                           onChange={(e) => props.handleChange(e, row)}
-                          style={{ width: "80px"}}
+                          style={{ width: "80px" }}
                           size="small"
                         />
                       </TableCell>

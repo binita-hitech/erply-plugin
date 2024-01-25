@@ -16,6 +16,7 @@ import moment from 'moment/moment';
 import Product from '../../Components/Product';
 import { Masonry } from "@mui/lab";
 import OrderCard from "../../Components/OrderDetailCard"
+//import moment from 'moment-timezone';
 
 const columns = [
     { id: "code", name: "Code" },
@@ -220,11 +221,13 @@ const PurchaseOrderDetail = () => {
     var warehouses2 = localStorage.getItem('warehouses');
     var warehouses1 = JSON.parse(warehouses2);
 
+    const australiaLocale = 'en-au';
+    const australiaTimeZone = 'Australia/Sydney';
 
     const [invoiceData, setInvoiceData] = useState({
-        invoiceDate: "",
+        invoiceDate: dayjs(),
         invoiceNumber: "",
-        invoiceTime: "",
+        invoiceTime: dayjs(),
         invoiceDueDays: "14",
         notes: "",
     });
@@ -301,7 +304,7 @@ const PurchaseOrderDetail = () => {
         var allData = [];
         pickupList &&
             pickupList.map((pick) => {
-               
+
                 var newData = {
                     quantity: 0,
                     itemName: pick.itemName,
@@ -491,7 +494,7 @@ const PurchaseOrderDetail = () => {
                                 {(!loading && !order.supplierName) ?
                                     openExceptionBox && (
                                         <Reddiv>
-                                            <span>This order has no supplier. Please contact Erply for further access.</span>
+                                            <span>This order has no supplier.</span>
                                             <Close onClick={() => setOpenExceptionBox(false)} />
                                         </Reddiv>
                                     ) : null}
@@ -597,6 +600,7 @@ const PurchaseOrderDetail = () => {
                                                             label="Invoice Time"
                                                             name="invoiceTime"
                                                             value={invoiceData.invoiceTime}
+                                                            //value={dayjs(invoiceData.invoiceTime).locale(australiaLocale)}
                                                             onChange={handleChange2}
 
                                                         />
@@ -675,6 +679,8 @@ const PurchaseOrderDetail = () => {
                                 setProductItems={setProductItems}
                                 edit={edit}
                                 setEdit={setEdit}
+                                session={session}
+                                code={code}
                             />
                         </Grid>
                     ) : (
@@ -686,6 +692,11 @@ const PurchaseOrderDetail = () => {
                             >
                                 {filteredData &&
                                     filteredData.map((po) => {
+                                        const handleSO = (saleID) => {
+                                            console.log("handleso", saleID);
+                                            const url = `https://au.erply.com/${code}/?lang=eng&section=invoice&authKey=${session}&edit=${saleID}`;
+                                            window.open(url, '_blank');
+                                          };
                                         let curr = {};
                                         if (modifiedData?.length > 0) {
                                             modifiedData.forEach((m) => {
@@ -714,6 +725,9 @@ const PurchaseOrderDetail = () => {
                                                     setProductItems={setProductItems}
                                                     edit={edit}
                                                     setEdit={setEdit}
+                                                    handleSO={handleSO}
+                                                    session={session}
+                                                    code={code}
                                                 />
                                             </Box>
                                         );
@@ -800,8 +814,8 @@ const PurchaseOrderDetail = () => {
                     <ButtonsCart>
 
                         <LeftButtons>
-                            <Button variant="contained" onClick={handleSubmit} >Recieve PO</Button>
-                            <Button variant="contained">Partial Recieve</Button>
+                            <Button variant="contained" disabled={!order.supplierName} onClick={handleSubmit} >Recieve PO</Button>
+                            {/* <Button variant="contained">Partial Recieve</Button> */}
                         </LeftButtons>
                         <RightButton>
                             <Button variant="contained">Reset</Button>

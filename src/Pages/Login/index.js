@@ -81,8 +81,8 @@ const Login = () => {
                 setSnackMessage("Logged in successfully!");
                 setLoading(false);
                 setTimeout(() => {
-                    navigate("/dashboard");
-                }, 1000);
+                    navigate("/purchaseorder");
+                }, 500);
             } else {
                 setLoading(false);
                 setOpen(true);

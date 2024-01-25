@@ -123,7 +123,7 @@ const OrderCard = (props) => {
             </Box>
           <Box
             display={"grid"}
-            gridTemplateColumns={"1.75fr 1.50fr 1fr"}
+            gridTemplateColumns={"1.75fr 1.50fr 1fr 0.3fr"}
             gap="15px"
             mt={3}
             color={"#999"}
@@ -134,6 +134,7 @@ const OrderCard = (props) => {
             </span>
             <span>Item : {props.order?.itemName}</span>
             <span>Order Qty : {props.order?.amount}</span>
+            <span>SO: <span style={{cursor:"pointer", color:"royalblue", textDecoration: "underline"}} onClick={() => props.handleSO(props.order?.saleID)}>{props.order?.soNumber}</span></span>
           </Box>
           </OrderHeader>
         </Box>
