@@ -208,6 +208,7 @@ const PurchaseOrderDetail = () => {
     const [productItems, setProductItems] = React.useState([]);
     const [edit, setEdit] = React.useState(false)
     const [open, setOpen] = useState(false);
+    const [reset, setReset] = useState(false);
     const [snackStatus, setSnackStatus] = useState("");
     const [snackMessage, setSnackMessage] = useState("");
     var [modifiedData, setModifiedData] = useState([]);
@@ -308,9 +309,6 @@ const PurchaseOrderDetail = () => {
         var allData = [];
         pickupList &&
             pickupList.map((pick) => {
-
-
-
                 var newData = {
                     quantity: 0,
                     itemName: pick.itemName,
@@ -334,6 +332,43 @@ const PurchaseOrderDetail = () => {
         setModifiedData(allData);
         setFilteredData(pickupList);
     }, [pickupList]);
+
+    useEffect(() => {
+        setInvoiceData({
+            invoiceDate: dayjs(),
+            invoiceNumber: "",
+            invoiceTime: dayjs(),
+            invoiceDueDays: "14",
+            notes: "",
+        });
+        var allData = [];
+        pickupList &&
+            pickupList.map((pick) => {
+                var newData = {
+                    quantity: 0,
+                    itemName: pick.itemName,
+                    price: pick.price,
+                    discount: pick.discount,
+                    amount: pick.amount,
+                    code: pick.code,
+                    gstRate: vat[0]?.rate,
+                    vatRateID: 1,
+                    costTotal: 0,
+                    totalWithGst: 0,
+                    id: pick.detailID,
+                    productID: pick.productID,
+                    soNumber: pick.soNumber,
+                    barcode: pick.barcode,
+                    barcodeFlag: false,
+                };
+                allData.push(newData);
+            });
+
+        setModifiedData(allData);
+        setFilteredData(pickupList);
+        setBarcode("");
+        setReset(false);
+    }, [reset]);
 
     useEffect(() => {
         let calculatedTotal = 0;
@@ -403,7 +438,7 @@ const PurchaseOrderDetail = () => {
     useEffect(() => {
         var res = modifiedData.filter((mod) => {
             if (parseInt(mod.barcode) == barcode) {
-                return (mod.barcodeFlag = true, mod.quantity= parseInt(mod.amount));
+                return (mod.barcodeFlag = true, mod.quantity = parseInt(mod.amount));
             } else {
                 return mod
             }
@@ -416,16 +451,16 @@ const PurchaseOrderDetail = () => {
         const updatedData = modifiedData.map((mod) => {
             if (mod.id === pick.detailID) {
                 let currValue;
-               
+
                 if (e.target.value <= 0) {
-                   
+
                     currValue = 0;
                 }
                 // else if (e.target.value >= parseInt(pick.amount)) {
                 //     currValue = parseInt(pick.amount);
                 // } 
                 else {
-                    
+
                     currValue = e.target.value;
                 }
                 return {
@@ -489,6 +524,10 @@ const PurchaseOrderDetail = () => {
                     }
                 });
         }
+    }
+
+    const handleReset = () => {
+        setReset(true);       
     }
 
     const calculateDueDate = () => {
@@ -780,6 +819,7 @@ const PurchaseOrderDetail = () => {
                                 multiline
                                 minRows={1}
                                 name="barcode"
+                                value={barcode}
                                 type="text"
                                 onChange={(e) => handleChangeBarcode(e)}
 
@@ -850,7 +890,7 @@ const PurchaseOrderDetail = () => {
                             {/* <Button variant="contained">Partial Recieve</Button> */}
                         </LeftButtons>
                         <RightButton>
-                            <Button variant="contained">Reset</Button>
+                            <Button variant="contained" onClick={handleReset} >Reset</Button>
                         </RightButton>
 
                     </ButtonsCart>
