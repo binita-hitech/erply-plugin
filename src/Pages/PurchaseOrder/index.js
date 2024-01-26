@@ -4,7 +4,8 @@ import {
     useMediaQuery,
     useTheme,
     Collapse,
-    Snackbar
+    Snackbar,
+    Autocomplete
 } from '@mui/material';
 import { ArrowBack, ArrowForward, Cancel, Close, FilterList, Search } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
@@ -152,6 +153,7 @@ const PurchaseOrder = () => {
 
     const [filterData, setFilterData] = useState({
         warehouse: "",
+        warehouseName: "",
         searchValue: "",
         searchValue1: "",
         remove: false,
@@ -159,6 +161,7 @@ const PurchaseOrder = () => {
 
     const [submittedData, setSubmittedData] = useState({
         warehouse: "",
+        warehouseName: "",
         searchValue: "",
         searchValue1: "",
         submit: false,
@@ -185,6 +188,7 @@ const PurchaseOrder = () => {
     useEffect(() => {
         if (
             filterData.warehouse === "" &&
+            filterData.warehouseName === "" &&
             filterData.searchValue === "" &&
             filterData.searchValue1 === ""
         ) {
@@ -194,9 +198,8 @@ const PurchaseOrder = () => {
             });
         }
         if (filterData.warehouse === " ") filterData.warehouse = "";
-
+        if (filterData.warehouseName === " ") filterData.warehouseName = "";
         if (filterData.searchValue === " ") filterData.searchValue = "";
-
         if (filterData.searchValue1 === " ") filterData.searchValue1 = "";
 
         filterData.remove === true && handleFilter();
@@ -214,6 +217,7 @@ const PurchaseOrder = () => {
         currentpolicy == null
             ? getPoList()
             : currentpolicy.warehouse == "" &&
+                currentpolicy.warehouseName == "" &&
                 currentpolicy.searchValue == "" &&
                 currentpolicy.searchValue1 == "" &&
                 currentpolicy.removed == false
@@ -243,8 +247,7 @@ const PurchaseOrder = () => {
             });
     };
 
-    //console.log("warehouses", warehouses);
-    console.log("po", poList);
+
 
     const handleChangePage = (event, page) => {
         //setPage(newPage);
@@ -332,6 +335,7 @@ const PurchaseOrder = () => {
         setSubmittedData({
             ...submittedData,
             warehouse: filterData.warehouse,
+            warehouseName: filterData.warehouseName,
             searchValue: filterData.searchValue,
             searchValue1: filterData.searchValue1,
 
@@ -350,6 +354,7 @@ const PurchaseOrder = () => {
         setLoading(true);
         if (
             filterData.warehouse ||
+            filterData.warehouseName ||
             filterData.searchValue ||
             filterData.searchValue1
 
@@ -378,15 +383,38 @@ const PurchaseOrder = () => {
 
     const handleChangeFilter = (e) => {
         const { name, value } = e.target;
+        if (name === "warehouse") {
+            setFilterData({
+                ...filterData,
+                warehouseName: value,
+                remove: false,
+            });
+        }
+        else {
+            setFilterData({
+                ...filterData,
+                [name]: value,
+                remove: false,
+            });
+        }
+    };
+
+    const handleChangeWarehouse = (value) => {
         setFilterData({
             ...filterData,
-            [name]: value,
+            warehouse: value !== null ? value.warehouseID : "",
+            warehouseName: value !== null ? value.warehouseName : "",
             remove: false,
         });
     };
-    // console.log('filter data', filterData);
+ 
 
     const handleRemove = (data) => {
+
+        if (data === "warehouse") {
+            filterData.warehouseName = "";
+            submittedData.warehouseName = "";
+        }
 
         setFilterData({
             ...filterData,
@@ -487,6 +515,7 @@ const PurchaseOrder = () => {
                                                                 value={filterData.searchValue}
                                                                 name="searchValue"
                                                                 onChange={handleChangeFilter}
+                                                                onKeyDown={e => { if (e.key === "Enter") handleFilter() }}
                                                                 InputProps={{
                                                                     endAdornment: (
                                                                         <InputAdornment position="end">
@@ -514,6 +543,7 @@ const PurchaseOrder = () => {
                                                                 value={filterData.searchValue1}
                                                                 name="searchValue1"
                                                                 onChange={handleChangeFilter}
+                                                                onKeyDown={e => { if (e.key === "Enter") handleFilter() }}
                                                                 InputProps={{
                                                                     endAdornment: (
                                                                         <InputAdornment position="end">
@@ -541,8 +571,8 @@ const PurchaseOrder = () => {
                                             <Box p={2} pb={2} sx={{ display: 'flex', alignItems: 'flex-end' }}>
 
                                                 <StyledFormControl>
-                                                    <InputLabel size="small" id="demo-simple-select-standard-label">Search By Warehouse</InputLabel>
-                                                    <Select
+                                                    <InputLabel size="small" id="demo-simple-select-standard-label"></InputLabel>
+                                                    {/* <Select
                                                         labelId="demo-simple-select-standard-label"
                                                         id="demo-simple-select-standard"
                                                         value={filterData.warehouse}
@@ -556,7 +586,31 @@ const PurchaseOrder = () => {
                                                         {warehouses1 && warehouses1.map((warehouse, index) => (
                                                             <MenuItem value={warehouse.warehouseID}>{warehouse.warehouseName}</MenuItem>
                                                         ))}
-                                                    </Select>
+                                                    </Select> */}
+                                                    <Autocomplete
+                                                        //disablePortal
+                                                        //id="location_name"
+                                                        options={warehouses1}
+                                                        inputValue={filterData.warehouseName}
+                                                        getOptionLabel={(option) => option.warehouseName}
+                                                        renderOption={(props, option, index) => { return <li {...props} key={option.warehouseID}>{option.warehouseName}</li> }}
+                                                        onChange={(event, newValue) => {
+                                                            handleChangeWarehouse(newValue);
+                                                        }}
+                                                        renderInput={(params) => (
+                                                            <TextField
+                                                                {...params}
+                                                                onChange={handleChangeFilter}
+                                                                onKeyDown={e => { if (e.key === "Enter") handleFilter() }}
+                                                                value={filterData.warehouseName}
+                                                                placeholder="Search By Warehouse"
+                                                                variant="outlined"
+                                                                name="warehouse"
+                                                                size="small"
+
+                                                            />
+                                                        )}
+                                                    />
                                                 </StyledFormControl>
 
                                             </Box>
@@ -575,16 +629,17 @@ const PurchaseOrder = () => {
                                         </Card>
                                     </Collapse>
                                     {submittedData.warehouse ||
+                                    submittedData.warehouseName ||
                                         submittedData.searchValue ||
                                         submittedData.searchValue1 ? (
                                         <Card>
 
                                             <FilteredBox>
                                                 <span>Filtered: </span>
-                                                {submittedData.warehouse && (
+                                                {submittedData.warehouseName && (
                                                     <p>
                                                         <span>
-                                                            Warehouse: {poList[0]?.warehouseName}
+                                                            Warehouse: {submittedData.warehouseName}
 
                                                         </span>
                                                         <Close

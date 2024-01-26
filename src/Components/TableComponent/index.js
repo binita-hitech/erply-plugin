@@ -88,9 +88,6 @@ TablePaginationActions.propTypes = {
 
 export default function TableComponent1(props) {
 
-  console.log("prrpss", props);
-
-
 
   const state = {
     clientCode: props.clientCode,

@@ -9,7 +9,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers';
 import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
-import { useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import httpclient from '../../utils';
 import MuiAlert from "@mui/material/Alert";
 import moment from 'moment/moment';
@@ -34,6 +34,7 @@ const columns = [
 ];
 
 const FlexContent = styled("div")(({ theme }) => ({
+    fontFamily: "Poppins !important",
     display: "flex",
     flexDirection: "row",
     fontSize: "17px",
@@ -47,6 +48,7 @@ const FlexContent = styled("div")(({ theme }) => ({
     },
 }));
 const FlexContent1 = styled("div")(({ theme }) => ({
+    fontFamily: "Poppins !important",
     display: "flex",
     flexDirection: "row",
     fontSize: "17px",
@@ -81,6 +83,7 @@ const FlexInnerTitle1 = styled("div")(({ theme }) => ({
 }));
 
 const FlexInnerTitle = styled("div")(({ theme }) => ({
+    fontFamily: "Poppins !important",
     display: "flex",
     alignItems: "left",
     justifyContent: "space-between",
@@ -192,6 +195,7 @@ const Reddiv = styled("div")(({ theme }) => ({
 
 const PurchaseOrderDetail = () => {
     const { id } = useParams();
+    const navigate = useNavigate();
     const location = useLocation();
     const [total, setTotal] = React.useState(0);
     const [total2, setTotal2] = React.useState(0);
@@ -246,13 +250,13 @@ const PurchaseOrderDetail = () => {
     //   });
 
     const handleChange1 = (date) => {
-        console.log("date", date);
+
         setInvoiceData({ ...invoiceData, invoiceDate: date.format('DD-MM-YYYY') });
     };
 
 
     const handleChange2 = (selectedTime) => {
-        console.log("time", selectedTime);
+
         const formattedTime = selectedTime.format('hh:mm A'); // Adjust the format as needed
         setInvoiceData({
             ...invoiceData,
@@ -373,13 +377,11 @@ const PurchaseOrderDetail = () => {
                 mod = { ...mod, [name]: value };
                 if (name === "gstRate") {
                     for (let i = 0; i < vat.length; i++) {
-                    
+
                         if (parseFloat(vat[i].rate) === parseFloat(mod.gstRate)) {
-                           
+
                             mod.vatRateID = vat[i].id;
                             break;
-                        } else {
-                            console.log("here???");
                         }
                     }
                 }
@@ -401,7 +403,7 @@ const PurchaseOrderDetail = () => {
     useEffect(() => {
         var res = modifiedData.filter((mod) => {
             if (parseInt(mod.barcode) == barcode) {
-                return (mod.barcodeFlag = true);
+                return (mod.barcodeFlag = true, mod.quantity= parseInt(mod.amount));
             } else {
                 return mod
             }
@@ -414,13 +416,16 @@ const PurchaseOrderDetail = () => {
         const updatedData = modifiedData.map((mod) => {
             if (mod.id === pick.detailID) {
                 let currValue;
+               
                 if (e.target.value <= 0) {
+                   
                     currValue = 0;
                 }
                 // else if (e.target.value >= parseInt(pick.amount)) {
                 //     currValue = parseInt(pick.amount);
                 // } 
                 else {
+                    
                     currValue = e.target.value;
                 }
                 return {
@@ -437,42 +442,53 @@ const PurchaseOrderDetail = () => {
 
 
     const handleSubmit = () => {
-        setLoading(true);
-        var formData = new FormData();
-        formData.append('invoiceDate', invoiceData.invoiceDate);
-        formData.append('invoiceNumber', invoiceData.invoiceNumber);
-        formData.append('invoiceTime', invoiceData.invoiceTime);
-        formData.append('invoiceDueDays', invoiceData.invoiceDueDays);
-        formData.append('notes', invoiceData.notes);
+        if (!invoiceData.invoiceNumber) {
 
-        modifiedData.forEach((item, index) => {
-            formData.append(`productID${index + 1}`, item.productID);
-            formData.append(`code${index + 1}`, item.code);
-            formData.append(`itemName${index + 1}`, item.itemName);
-            formData.append(`amount${index + 1}`, item.quantity);
-            formData.append(`price${index + 1}`, item.price);
-            formData.append(`discount${index + 1}`, item.discount);
-            formData.append(`vatrateID${index + 1}`, item.vatRateID);
-            formData.append(`soNumber${index + 1}`, item.soNumber);
-        });
+            setOpen(true);
+            setSnackStatus("error");
+            setSnackMessage("Invoice number can never be empty!");
 
-        httpclient.post(`/savePO.php?sessionKey=${session
-            }&clientCode=${code
-            }&supplierID=${order.supplierID
-            }&warehouseID=${order.warehouseID
-            }&poID=${id}`, formData).then(({ data }) => {
-                if (data.msg === "success") {
-                    setOpen(true);
-                    setSnackStatus("success");
-                    setSnackMessage(data.reason);
-                    setLoading(false);
-                } else {
-                    setLoading(false);
-                    setOpen(true);
-                    setSnackStatus("error");
-                    setSnackMessage(data.reason);
-                }
+        } else {
+            setLoading(true);
+            var formData = new FormData();
+            formData.append('invoiceDate', invoiceData.invoiceDate);
+            formData.append('invoiceNumber', invoiceData.invoiceNumber);
+            formData.append('invoiceTime', invoiceData.invoiceTime);
+            formData.append('invoiceDueDays', invoiceData.invoiceDueDays);
+            formData.append('notes', invoiceData.notes);
+
+            modifiedData.forEach((item, index) => {
+                formData.append(`productID${index + 1}`, item.productID);
+                formData.append(`code${index + 1}`, item.code);
+                formData.append(`itemName${index + 1}`, item.itemName);
+                formData.append(`amount${index + 1}`, item.quantity);
+                formData.append(`price${index + 1}`, item.price);
+                formData.append(`discount${index + 1}`, item.discount);
+                formData.append(`vatrateID${index + 1}`, item.vatRateID);
+                formData.append(`soNumber${index + 1}`, item.soNumber);
             });
+
+            httpclient.post(`/savePO.php?sessionKey=${session
+                }&clientCode=${code
+                }&supplierID=${order.supplierID
+                }&warehouseID=${order.warehouseID
+                }&poID=${id}`, formData).then(({ data }) => {
+                    if (data.msg === "success") {
+                        setOpen(true);
+                        setSnackStatus("success");
+                        setSnackMessage(data.reason);
+                        setLoading(false);
+                        setTimeout(() => {
+                            navigate("/purchaseorder");
+                        }, 500);
+                    } else {
+                        setLoading(false);
+                        setOpen(true);
+                        setSnackStatus("error");
+                        setSnackMessage(data.reason);
+                    }
+                });
+        }
     }
 
     const calculateDueDate = () => {
@@ -597,6 +613,7 @@ const PurchaseOrderDetail = () => {
                                                     type="text"
                                                     required
                                                     error={!invoiceData.invoiceNumber}
+                                                    helperText={!invoiceData.invoiceNumber ? "**Invoice number can never be empty!" : ""}
                                                     value={invoiceData.invoiceNumber}
                                                     onChange={(e) => handleChange0(e)}
                                                     sx={{ width: "100%" }} /></Values>
@@ -709,7 +726,6 @@ const PurchaseOrderDetail = () => {
                                 {filteredData &&
                                     filteredData.map((po) => {
                                         const handleSO = (saleID) => {
-                                            console.log("handleso", saleID);
                                             const url = `https://au.erply.com/${code}/?lang=eng&section=invoice&authKey=${session}&edit=${saleID}`;
                                             window.open(url, '_blank');
                                         };
@@ -722,9 +738,9 @@ const PurchaseOrderDetail = () => {
                                             });
                                         }
 
-                                        if (curr.barcodeFlag === true) {
-                                            curr.quantity = parseInt(curr.amount, 10);
-                                        }
+                                        // if (curr.barcodeFlag === true) {
+                                        //     curr.quantity = parseInt(curr.amount, 10);
+                                        // }
 
                                         return (
                                             <Box key={po.id}>

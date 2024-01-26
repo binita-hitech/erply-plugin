@@ -74,7 +74,7 @@ const OrderCard = (props) => {
 
   const OrderHeader = styled(Box)(({ theme }) => ({
     color: "#111",
-    background: parseInt(props?.order.amount) === props.curr?.quantity ? "#d1ffbd" : "#ffcccb",
+    background: parseInt(props?.order.amount) <= props.curr?.quantity ? "#d1ffbd" : "#ffcccb",
     fontFamily: "Poppins !important",
     padding:"15px",
     gap: "10px",
@@ -193,7 +193,7 @@ const OrderCard = (props) => {
                             onChange={(e) => props.handleChange3(e, props.order)}
                             style={{ width: "100%" }}
                             size="small"
-                            error={props.curr.quantity !== parseInt(props.curr.amount)}
+                            error={props.curr.quantity < parseInt(props.curr.amount)}
                             //helperText={props.curr.quantity !== parseInt(props.curr.amount) ? "order-qty and recieve-qty must be same" : ""}
                             Inputprops={{
                                 inputprops: {

@@ -19,7 +19,7 @@ import TableRow from '@mui/material/TableRow';
 
 
 const Product = (props) => {
-  console.log("prod.props", props); 
+
   return (
     <>
       <Container maxWidth="lx">
@@ -45,26 +45,23 @@ const Product = (props) => {
               {props.rows.length > 0 ? (
                 props.rows.map((row) => {
                   const handleSO = (saleID) => {
-                    console.log("handleso", saleID);
+
                     const url = `https://au.erply.com/${props.code}/?lang=eng&section=invoice&authKey=${props.session}&edit=${saleID}`;
                     window.open(url, '_blank');
                   };
                   var curr = {};
                   props.modifiedData?.length > 0 &&
                     props.modifiedData.map((m) => {
+                      
                       if (m.id === row.detailID) {
                         curr = m;
                       }
                     });
-
-
-                  if (curr.barcodeFlag === true) {
-                    curr.quantity = parseInt(curr.amount)
-                  };
-
+                   
+                   
                   return (
                     <TableRow key={row.id} sx={{
-                      background: parseInt(row?.amount) === curr?.quantity ? "#d1ffbd" : "#ffcccb",
+                      background: (parseInt(row?.amount) <= curr?.quantity) || (curr.barcodeFlag === true) ? "#d1ffbd" : "#ffcccb",
                     }}>
                       <TableCell>{row.code}</TableCell>
                       <TableCell>
@@ -82,7 +79,7 @@ const Product = (props) => {
                           size="small"
                         />
                       </TableCell>
-                      <TableCell><span style={{cursor:"pointer", color:"royalblue", textDecoration: "underline"}} onClick={() => handleSO(row.saleID)}>{row.soNumber}</span></TableCell>
+                      <TableCell><span style={{ cursor: "pointer", color: "royalblue", textDecoration: "underline" }} onClick={() => handleSO(row.saleID)}>{row.soNumber}</span></TableCell>
                       <TableCell>{row.amount}</TableCell>
                       <TableCell>
                         <TextField
@@ -99,7 +96,7 @@ const Product = (props) => {
                           onChange={(e) => props.handleChange3(e, row)}
                           style={{ width: "80px" }}
                           size="small"
-                          error={curr.quantity !== parseInt(curr.amount)}
+                          error={curr.quantity < parseInt(curr.amount)}
                           //helperText={curr.quantity !== parseInt(curr.amount) ? "order-qty and recieve-qty must be same" : ""}
                           InputProps={{
                             inputProps: {
