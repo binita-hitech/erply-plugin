@@ -151,7 +151,7 @@ const Product = (props) => {
                             onChange={(e) => props.handleChange(e, row)}
                           >
                             {props.vat.map((vat1) => (
-                              <MenuItem value={vat1.rate}>{vat1.name}</MenuItem>
+                              <MenuItem value={vat1.rate} key={vat1.id}>{vat1.name}</MenuItem>
 
                             ))}
                           </Select>

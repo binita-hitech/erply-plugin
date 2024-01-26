@@ -305,6 +305,8 @@ const PurchaseOrderDetail = () => {
         pickupList &&
             pickupList.map((pick) => {
 
+
+
                 var newData = {
                     quantity: 0,
                     itemName: pick.itemName,
@@ -313,6 +315,7 @@ const PurchaseOrderDetail = () => {
                     amount: pick.amount,
                     code: pick.code,
                     gstRate: vat[0]?.rate,
+                    vatRateID: 1,
                     costTotal: 0,
                     totalWithGst: 0,
                     id: pick.detailID,
@@ -364,17 +367,30 @@ const PurchaseOrderDetail = () => {
 
 
     const handleChange = (e, pick) => {
-
         const { name, value } = e.target;
         const res = modifiedData.map((mod) => {
             if (mod.id === pick.detailID) {
-                return { ...mod, [name]: value };
+                mod = { ...mod, [name]: value };
+                if (name === "gstRate") {
+                    for (let i = 0; i < vat.length; i++) {
+                    
+                        if (parseFloat(vat[i].rate) === parseFloat(mod.gstRate)) {
+                           
+                            mod.vatRateID = vat[i].id;
+                            break;
+                        } else {
+                            console.log("here???");
+                        }
+                    }
+                }
+                return mod;
             } else {
                 return mod;
             }
         });
 
         setModifiedData(res);
+
     };
 
     const handleChangeBarcode = (e) => {
@@ -436,7 +452,7 @@ const PurchaseOrderDetail = () => {
             formData.append(`amount${index + 1}`, item.quantity);
             formData.append(`price${index + 1}`, item.price);
             formData.append(`discount${index + 1}`, item.discount);
-            formData.append(`vatrateID${index + 1}`, item.gstRate);
+            formData.append(`vatrateID${index + 1}`, item.vatRateID);
             formData.append(`soNumber${index + 1}`, item.soNumber);
         });
 
@@ -696,7 +712,7 @@ const PurchaseOrderDetail = () => {
                                             console.log("handleso", saleID);
                                             const url = `https://au.erply.com/${code}/?lang=eng&section=invoice&authKey=${session}&edit=${saleID}`;
                                             window.open(url, '_blank');
-                                          };
+                                        };
                                         let curr = {};
                                         if (modifiedData?.length > 0) {
                                             modifiedData.forEach((m) => {
