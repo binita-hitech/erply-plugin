@@ -314,7 +314,7 @@ const PurchaseOrder = () => {
                     }
                 })
             : httpclient
-                .get(`getAllPO.php?sessionKey=${session}&clientCode=${code}&perPage=${+event.target.value}&pagination=${1}`)
+                .get(`getAllPO.php?sessionKey=${session}&clientCode=${code}&perPage=${+event.target.value}&pagination=${page}`)
                 .then(({ data }) => {
                     if (data.msg === "success") {
                         setPoList(data.orderData);

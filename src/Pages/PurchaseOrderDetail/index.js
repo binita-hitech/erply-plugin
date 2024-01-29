@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useTheme, useMediaQuery, Pagination, Backdrop, Box, Button, Card, CircularProgress, Container, CssBaseline, Grid, Snackbar, TextField, Typography, styled } from '@mui/material';
-import { ArrowBack, Close } from '@mui/icons-material';
+import { useTheme, useMediaQuery, Pagination, Backdrop, Box, Button, Card, CircularProgress, Container, CssBaseline, Grid, Snackbar, TextField, Typography, styled, Tooltip, IconButton } from '@mui/material';
+import { ArrowBack, Close, RestartAlt } from '@mui/icons-material';
 import dayjs from 'dayjs';
 import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -229,6 +229,8 @@ const PurchaseOrderDetail = () => {
     const australiaLocale = 'en-au';
     const australiaTimeZone = 'Australia/Sydney';
 
+
+
     const [invoiceData, setInvoiceData] = useState({
         invoiceDate: dayjs(),
         invoiceNumber: "",
@@ -236,6 +238,13 @@ const PurchaseOrderDetail = () => {
         invoiceDueDays: "14",
         notes: "",
     });
+
+
+     const handleChange1 = (date) => {
+     
+        const jsDate = date.toDate();
+        setInvoiceData({ ...invoiceData, invoiceDate: jsDate });
+    };
 
     // const handleChange1 = (date) => {
     //     console.log("date", date);
@@ -246,19 +255,10 @@ const PurchaseOrderDetail = () => {
     //     });
     // };
 
-    // const [invoiceData, setInvoiceData] = useState({
-    //     invoiceDate: dayjs().format('DD-MM-YYYY'), // Set default value to today's date
-    //   });
-
-    const handleChange1 = (date) => {
-
-        setInvoiceData({ ...invoiceData, invoiceDate: date.format('DD-MM-YYYY') });
-    };
-
-
+    
     const handleChange2 = (selectedTime) => {
-
-        const formattedTime = selectedTime.format('hh:mm A'); // Adjust the format as needed
+        const jsDate = selectedTime.toDate();
+        const formattedTime = jsDate; // Adjust the format as needed
         setInvoiceData({
             ...invoiceData,
             invoiceTime: formattedTime,
@@ -324,7 +324,7 @@ const PurchaseOrderDetail = () => {
                     productID: pick.productID,
                     soNumber: pick.soNumber,
                     barcode: pick.barcode,
-                    barcodeFlag: false,
+                    
                 };
                 allData.push(newData);
             });
@@ -334,40 +334,42 @@ const PurchaseOrderDetail = () => {
     }, [pickupList]);
 
     useEffect(() => {
-        setInvoiceData({
-            invoiceDate: dayjs(),
-            invoiceNumber: "",
-            invoiceTime: dayjs(),
-            invoiceDueDays: "14",
-            notes: "",
-        });
-        var allData = [];
-        pickupList &&
-            pickupList.map((pick) => {
-                var newData = {
-                    quantity: 0,
-                    itemName: pick.itemName,
-                    price: pick.price,
-                    discount: pick.discount,
-                    amount: pick.amount,
-                    code: pick.code,
-                    gstRate: vat[0]?.rate,
-                    vatRateID: 1,
-                    costTotal: 0,
-                    totalWithGst: 0,
-                    id: pick.detailID,
-                    productID: pick.productID,
-                    soNumber: pick.soNumber,
-                    barcode: pick.barcode,
-                    barcodeFlag: false,
-                };
-                allData.push(newData);
+        if (reset === true) {
+            setInvoiceData({
+                invoiceDate: dayjs(),
+                invoiceNumber: "",
+                invoiceTime: dayjs(),
+                invoiceDueDays: "14",
+                notes: "",
             });
+            var allData = [];
+            pickupList &&
+                pickupList.map((pick) => {
+                    var newData = {
+                        quantity: 0,
+                        itemName: pick.itemName,
+                        price: pick.price,
+                        discount: pick.discount,
+                        amount: pick.amount,
+                        code: pick.code,
+                        gstRate: vat[0]?.rate,
+                        vatRateID: 1,
+                        costTotal: 0,
+                        totalWithGst: 0,
+                        id: pick.detailID,
+                        productID: pick.productID,
+                        soNumber: pick.soNumber,
+                        barcode: pick.barcode,
+                        
+                    };
+                    allData.push(newData);
+                });
 
-        setModifiedData(allData);
-        setFilteredData(pickupList);
-        setBarcode("");
-        setReset(false);
+            setModifiedData(allData);
+            setFilteredData(pickupList);
+            setBarcode("");
+            setReset(false);
+        }
     }, [reset]);
 
     useEffect(() => {
@@ -433,18 +435,23 @@ const PurchaseOrderDetail = () => {
     const handleChangeBarcode = (e) => {
         setBarcode(e.target.value);
     };
-    //console.log("barcode", barcode);
+    
 
     useEffect(() => {
+        
         var res = modifiedData.filter((mod) => {
-            if (parseInt(mod.barcode) == barcode) {
-                return (mod.barcodeFlag = true, mod.quantity = parseInt(mod.amount));
+            if (parseInt(mod.barcode) === parseInt(barcode)) {
+                
+                return (mod.quantity = parseInt(mod.amount));
             } else {
                 return mod
             }
         });
         setModifiedData(res);
     }, [barcode])
+
+
+    
 
 
     const handleChange3 = (e, pick) => {
@@ -527,7 +534,10 @@ const PurchaseOrderDetail = () => {
     }
 
     const handleReset = () => {
-        setReset(true);       
+        setReset(true);
+    }
+    const handleBarcodeReset = () => {
+        setBarcode("");
     }
 
     const calculateDueDate = () => {
@@ -535,14 +545,14 @@ const PurchaseOrderDetail = () => {
         if (!isNaN(dueDays)) {
             const currentDate = moment();
             const futureDate = currentDate.add(dueDays, 'days');
-            return futureDate.format('ddd, MMM Do YYYY, h:mm:ss a');
+            return futureDate.format('ddd, MMM Do YYYY, 00:00:00');
         }
         return '';
     };
 
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-
+   
     return (
         <div>
             <Container component="main" maxWidth="l" style={{ textAlign: 'left', marginTop: '20px', paddingBottom: '60px' }}>
@@ -634,8 +644,10 @@ const PurchaseOrderDetail = () => {
                                                                 name="invoiceDate"
                                                                 label="Invoice Date"
                                                                 format="DD-MM-YYYY"
-                                                                //value={invoiceData.invoiceDate}
                                                                 value={invoiceData.invoiceDate}
+                                                                //value={invoiceData.invoiceDate.toDate()}
+                                                                //value={toDate(invoiceData.invoiceDate)}
+                                                                //value={dayjs(invoiceData.invoiceDate)}
                                                                 onChange={handleChange1}
 
                                                             />
@@ -777,10 +789,6 @@ const PurchaseOrderDetail = () => {
                                             });
                                         }
 
-                                        // if (curr.barcodeFlag === true) {
-                                        //     curr.quantity = parseInt(curr.amount, 10);
-                                        // }
-
                                         return (
                                             <Box key={po.id}>
                                                 <OrderCard
@@ -825,6 +833,11 @@ const PurchaseOrderDetail = () => {
 
 
                             />
+                            <Tooltip title={"Reset Barcode"}>
+                                <IconButton onClick={handleBarcodeReset}>
+                                    <RestartAlt style={{ color: "#9d182d" }} />
+                                </IconButton>
+                            </Tooltip>
 
                         </Grid>
                     </Box>

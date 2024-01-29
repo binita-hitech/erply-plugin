@@ -61,7 +61,7 @@ const Product = (props) => {
                    
                   return (
                     <TableRow key={row.id} sx={{
-                      background: (parseInt(row?.amount) <= curr?.quantity) || (curr.barcodeFlag === true) ? "#d1ffbd" : "#ffcccb",
+                      background: (parseInt(row?.amount) <= curr?.quantity) ? "#d1ffbd" : "#ffcccb",
                     }}>
                       <TableCell>{row.code}</TableCell>
                       <TableCell>
