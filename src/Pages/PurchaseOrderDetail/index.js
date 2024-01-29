@@ -738,6 +738,35 @@ const PurchaseOrderDetail = () => {
                             </GridBlockContent>
                         </Grid>
                     </Grid>
+
+                    <Box pt={0} p={1} textAlign={"center"} >
+                        <Grid item xs={12} md={12}>
+
+                            <FlexInnerTitle>
+                                <span>Scan Product Barcodes/Sku</span> <span>  </span>
+                            </FlexInnerTitle>
+                            <TextField
+                                id="outlined-multiline-flexible"
+                                label="Barcode"
+                                multiline
+                                minRows={1}
+                                name="barcode"
+                                value={barcode}
+                                type="text"
+                                onChange={(e) => handleChangeBarcode(e)}
+
+
+                            />
+                            <Tooltip title={"Reset Barcode"}>
+                                <IconButton onClick={handleBarcodeReset}>
+                                    <RestartAlt style={{ color: "#9d182d" }} />
+                                </IconButton>
+                            </Tooltip>
+
+                        </Grid>
+                    </Box>
+
+
                     <Box pt={0} p={4} >
                         <Grid item xs={12} md={12}>
                             <FlexContent>
@@ -815,32 +844,7 @@ const PurchaseOrderDetail = () => {
                         </Grid>
                     )}
 
-                    <Box pt={0} p={1} textAlign={"center"} >
-                        <Grid item xs={12} md={12}>
-
-                            <FlexInnerTitle>
-                                <span>Scan Product Barcodes/Sku</span> <span>  </span>
-                            </FlexInnerTitle>
-                            <TextField
-                                id="outlined-multiline-flexible"
-                                label="Barcode"
-                                multiline
-                                minRows={1}
-                                name="barcode"
-                                value={barcode}
-                                type="text"
-                                onChange={(e) => handleChangeBarcode(e)}
-
-
-                            />
-                            <Tooltip title={"Reset Barcode"}>
-                                <IconButton onClick={handleBarcodeReset}>
-                                    <RestartAlt style={{ color: "#9d182d" }} />
-                                </IconButton>
-                            </Tooltip>
-
-                        </Grid>
-                    </Box>
+                    
                     <Box pt={0} p={2} sx={{ backgroundColor: "#f5f5f5" }}  >
 
                         <Grid container spacing={2}>
