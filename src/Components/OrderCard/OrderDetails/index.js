@@ -53,7 +53,7 @@ const OrderDetails = ({ order, clientCode, sessionKey, warehouse }) => {
                         <p>Supplier: {order.supplierName}</p>
                     </div>
                     <div>
-                        <p>Status: {order.status}</p>
+                        <p>Status: {order.status?.split('_').join(' ')}</p>
                     </div>
                     <div>
                         <p>Total: {order.total === null ? "" : `$${parseFloat(order.total).toFixed(2)}`}</p>
