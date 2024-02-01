@@ -240,8 +240,8 @@ const PurchaseOrderDetail = () => {
     });
 
 
-     const handleChange1 = (date) => {
-     
+    const handleChange1 = (date) => {
+
         const jsDate = date.toDate();
         setInvoiceData({ ...invoiceData, invoiceDate: jsDate });
     };
@@ -255,7 +255,7 @@ const PurchaseOrderDetail = () => {
     //     });
     // };
 
-    
+
     const handleChange2 = (selectedTime) => {
         const jsDate = selectedTime.toDate();
         const formattedTime = jsDate; // Adjust the format as needed
@@ -324,7 +324,7 @@ const PurchaseOrderDetail = () => {
                     productID: pick.productID,
                     soNumber: pick.soNumber,
                     barcode: pick.barcode,
-                    
+
                 };
                 allData.push(newData);
             });
@@ -360,7 +360,7 @@ const PurchaseOrderDetail = () => {
                         productID: pick.productID,
                         soNumber: pick.soNumber,
                         barcode: pick.barcode,
-                        
+
                     };
                     allData.push(newData);
                 });
@@ -435,14 +435,14 @@ const PurchaseOrderDetail = () => {
     const handleChangeBarcode = (e) => {
         setBarcode(e.target.value);
     };
-    
+
 
     useEffect(() => {
-        
+
         var res = modifiedData.filter((mod) => {
             if (parseInt(mod.barcode) === parseInt(barcode)) {
-                
-                return (mod.quantity = parseInt(mod.amount));
+
+                return (mod.quantity = mod.quantity + 1);
             } else {
                 return mod
             }
@@ -451,7 +451,7 @@ const PurchaseOrderDetail = () => {
     }, [barcode])
 
 
-    
+
 
 
     const handleChange3 = (e, pick) => {
@@ -552,7 +552,7 @@ const PurchaseOrderDetail = () => {
 
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-   
+
     return (
         <div>
             <Container component="main" maxWidth="l" style={{ textAlign: 'left', marginTop: '20px', paddingBottom: '60px' }}>
@@ -612,7 +612,7 @@ const PurchaseOrderDetail = () => {
                                                 <FlexInnerTitle1>
                                                     <span>Status</span> <span> </span>
                                                 </FlexInnerTitle1>
-                                                <Values>{order.status}</Values>
+                                                <Values>{order.status?.split('_').join(' ')}</Values>
                                             </FlexContent1>
 
 
@@ -746,16 +746,12 @@ const PurchaseOrderDetail = () => {
                                 <span>Scan Product Barcodes/Sku</span> <span>  </span>
                             </FlexInnerTitle>
                             <TextField
-                                id="outlined-multiline-flexible"
-                                label="Barcode"
-                                multiline
-                                minRows={1}
+                                label="Barcode"                                
                                 name="barcode"
                                 value={barcode}
-                                type="text"
                                 onChange={(e) => handleChangeBarcode(e)}
-
-
+                                type="search"
+                                variant="outlined"                           
                             />
                             <Tooltip title={"Reset Barcode"}>
                                 <IconButton onClick={handleBarcodeReset}>
@@ -844,7 +840,7 @@ const PurchaseOrderDetail = () => {
                         </Grid>
                     )}
 
-                    
+
                     <Box pt={0} p={2} sx={{ backgroundColor: "#f5f5f5" }}  >
 
                         <Grid container spacing={2}>

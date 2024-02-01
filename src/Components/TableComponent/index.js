@@ -193,6 +193,8 @@ export default function TableComponent1(props) {
                                     <div>
                                       {parseInt(row?.quantity || row?.amount)}
                                     </div>
+                                  ) : col.id === "status" ? (
+                                    row[col.id]?.split('_').join(' ')
                                   ) : col.id === "actions" ? (
                                     <>
                                       <Link to={`/purchaseorderdetail/${row.id}`} state={state}>
@@ -243,7 +245,7 @@ export default function TableComponent1(props) {
 
         </TableContainer>
         {props.footer !== false && (
-          <TableFooter sx={{ display: "flex", justifyContent: "flex-end"}}>
+          <TableFooter sx={{ display: "flex", justifyContent: "flex-end" }}>
             <TableRow >
               <TablePagination
                 rowsPerPageOptions={[20, 50, 70, 100]}

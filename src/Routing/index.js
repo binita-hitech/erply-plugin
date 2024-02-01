@@ -5,6 +5,7 @@ import Navbar from '../Components/Navbar';
 import Dashboard from '../Pages/Dashboard';
 import PurchaseOrder from '../Pages/PurchaseOrder';
 import PurchaseOrderDetail from '../Pages/PurchaseOrderDetail';
+import CopyAllTexts from '../test';
 
 
 const PrivateRoute = ({ children }) => {
@@ -38,6 +39,7 @@ const Routing = () => {
                 <Route path="/dashboard" element={<PrivateRoute> <Dashboard /> </PrivateRoute>} />
                 <Route path="/purchaseorder" element={<PrivateRoute> <PurchaseOrder /> </PrivateRoute>} />
                 <Route path="/purchaseorderdetail/:id" element={<PrivateRoute> <PurchaseOrderDetail /> </PrivateRoute>} />
+                <Route path="/test" element={<CopyAllTexts/>}/>
             </Routes>
         </BrowserRouter>
     );
