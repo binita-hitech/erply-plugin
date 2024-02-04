@@ -154,7 +154,7 @@ const Login = () => {
                                         {loading ?
                                             <Button
                                                 variant="contained"
-                                                color="secondary"
+                                                color="primary"
                                             >
                                                 <CircularProgress style={{ height: "20px", width: "20px", color: "#fff", marginRight: "10px" }} /> Loading
                                             </Button> :

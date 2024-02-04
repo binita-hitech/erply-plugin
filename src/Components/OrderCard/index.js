@@ -87,7 +87,7 @@ const OrderCard = ({
       textTransform: "none",
     },
     "& svg": {
-      color: "#111",
+      color: "#ffffff",
       
     },
   }));

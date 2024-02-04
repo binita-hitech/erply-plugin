@@ -437,22 +437,42 @@ const PurchaseOrderDetail = () => {
     };
 
 
+    // useEffect(() => {
+     
+    //     var res = modifiedData.filter((mod) => {
+        
+    //         if (parseInt(mod.barcode) === parseInt(barcode)) {               
+    //             return (mod.quantity = mod.quantity + 1);
+    //         } else {
+    //             return mod
+    //         }
+        
+    //     });
+    //     setModifiedData(res);
+    // }, [barcode])
+
+
+
     useEffect(() => {
-
-        var res = modifiedData.filter((mod) => {
+        let modifiedDataCopy = [...modifiedData];
+        let barcodeUpdated = false;
+    
+        for (let index = 0; index < modifiedDataCopy.length; index++) {
+            const mod = modifiedDataCopy[index];
+    
             if (parseInt(mod.barcode) === parseInt(barcode)) {
-
-                return (mod.quantity = mod.quantity + 1);
-            } else {
-                return mod
+                if (!barcodeUpdated && mod.quantity < parseInt(mod.amount)) {
+                    mod.quantity = mod.quantity + 1;
+                    barcodeUpdated = true; 
+                    break;
+                }
             }
-        });
-        setModifiedData(res);
-    }, [barcode])
-
-
-
-
+        }
+    
+        setModifiedData(modifiedDataCopy);
+    
+    }, [barcode]);
+    
 
     const handleChange3 = (e, pick) => {
         const updatedData = modifiedData.map((mod) => {

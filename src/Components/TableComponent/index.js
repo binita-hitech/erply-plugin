@@ -18,8 +18,8 @@ import PropTypes from "prop-types";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: "#1976d2",
-    color: "#ffffff",
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.primary.light,
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,

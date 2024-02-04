@@ -8,7 +8,7 @@ import {
   TextField,
 } from "@mui/material";
 
-
+import { styled } from "@mui/material/styles";
 import React, { useEffect, useState } from "react";
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -17,6 +17,11 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 
+const StyledTableHead = styled(TableHead)(({ theme }) => ({
+  
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.primary.light,
+}))
 
 const Product = (props) => {
 
@@ -26,7 +31,7 @@ const Product = (props) => {
 
         <TableContainer>
           <Table>
-            <TableHead style={{ background: "#1976d2", color: "#f5f5f5" }}>
+            <StyledTableHead>
               <TableRow>
                 <TableCell style={{ color: "#f5f5f5" }}>Code</TableCell>
                 <TableCell style={{ color: "#f5f5f5" }}>Product</TableCell>
@@ -40,7 +45,7 @@ const Product = (props) => {
                 <TableCell style={{ color: "#f5f5f5" }}>Gross Total</TableCell>
                 {/* Actions */}
               </TableRow>
-            </TableHead>
+            </StyledTableHead>
             <TableBody>
               {props.rows.length > 0 ? (
                 props.rows.map((row) => {

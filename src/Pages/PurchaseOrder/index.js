@@ -42,7 +42,7 @@ const StyledFormControl = styled(FormControl)(({ theme }) => ({
 const FilteredBox = styled(Box)(({ theme }) => ({
     display: 'flex',
     alignItems: 'flex-start',
-    background: "#f9f9f9",
+    color: "#111",
     padding: "5px 10px",
     borderRadius: "5px",
     "& p": {
@@ -127,11 +127,6 @@ const PurchaseOrder = () => {
 
     var warehouses2 = localStorage.getItem('warehouses');
     var warehouses1 = JSON.parse(warehouses2);
-
-
-    //console.log("wqewe", warehouse);
-
-
 
     const [loading, setLoading] = useState(false);
     const [poList, setPoList] = useState([]);

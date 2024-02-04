@@ -9,8 +9,18 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { useNavigate } from "react-router";
+import { styled, useTheme } from "@mui/material/styles";
+
+const AppBarCustom = styled(AppBar, {
+  shouldForwardProp: (prop) => prop !== "open",
+})(({ theme, open }) => ({
+  
+   backgroundColor: theme.palette.primary.main,
+}));
 
 export default function Navbar() {
+
+  const theme = useTheme();
   const navigate = useNavigate();
   var userName = localStorage.getItem('userName');
   var username = JSON.parse(userName);
@@ -35,7 +45,7 @@ export default function Navbar() {
   return (
     <>
       <Box sx={{ flexGrow: 1, marginBottom: "5px" }}>
-        <AppBar position="static">
+        <AppBarCustom position="static">
           <Toolbar>
             <IconButton
               size="large"
@@ -73,7 +83,7 @@ export default function Navbar() {
 
             </Menu>
           </Toolbar>
-        </AppBar>
+        </AppBarCustom>
       </Box>
 
     </>
