@@ -21,7 +21,7 @@ import OrderCard from "../../Components/OrderDetailCard"
 const columns = [
     { id: "code", name: "Code" },
     { id: "itemName", name: "Product" },
-    { id: "soNumber", name: "SO" },
+    // { id: "soNumber", name: "SO" },
     { id: "amount", name: "Order Qty" },
     { id: "productQuantity", name: "Recieve Qty" },
     { id: "price", name: "Price" },

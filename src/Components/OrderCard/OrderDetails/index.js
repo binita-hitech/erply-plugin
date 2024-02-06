@@ -70,7 +70,7 @@ const OrderDetails = ({ order, clientCode, sessionKey, warehouse }) => {
                     pt={2}
                     gap={"15px"}
                 >
-                    
+
                     <Button
                         variant="contained"
                         color="primary"
@@ -78,10 +78,10 @@ const OrderDetails = ({ order, clientCode, sessionKey, warehouse }) => {
                         download
                         target="_blank"
                     >
-                        Download PO
+                        Display PO
                         <Download color="#ffffff" fontSize="small" />
                     </Button>
-                   
+
 
                     <Link to={`/purchaseorderdetail/${order.id}`} state={state}>
                         <Button

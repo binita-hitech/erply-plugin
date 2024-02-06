@@ -35,7 +35,7 @@ const Product = (props) => {
               <TableRow>
                 <TableCell style={{ color: "#f5f5f5" }}>Code</TableCell>
                 <TableCell style={{ color: "#f5f5f5" }}>Product</TableCell>
-                <TableCell style={{ color: "#f5f5f5" }}>SO</TableCell>
+                {/* <TableCell style={{ color: "#f5f5f5" }}>SO</TableCell> */}
                 <TableCell style={{ color: "#f5f5f5" }}>Order Qty</TableCell>
                 <TableCell style={{ color: "#f5f5f5" }}>Recieve Qty</TableCell>
                 <TableCell style={{ color: "#f5f5f5" }}>Price</TableCell>
@@ -84,7 +84,7 @@ const Product = (props) => {
                           size="small"
                         />
                       </TableCell>
-                      <TableCell><span style={{ cursor: "pointer", color: "royalblue", textDecoration: "underline" }} onClick={() => handleSO(row.saleID)}>{row.soNumber}</span></TableCell>
+                      {/* <TableCell><span style={{ cursor: "pointer", color: "royalblue", textDecoration: "underline" }} onClick={() => handleSO(row.saleID)}>{row.soNumber}</span></TableCell> */}
                       <TableCell>{row.amount}</TableCell>
                       <TableCell>
                         <TextField
